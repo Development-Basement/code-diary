@@ -2,5 +2,8 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "editor.insertSpaces": true,
-  "editor.stickyTabStops": true
+  "editor.stickyTabStops": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }
