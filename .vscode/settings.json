@@ -1,6 +1,6 @@
 {
-    "editor.tabSize": 2,
-    "editor.detectIndentation": false,
-    "editor.insertSpaces": true,
-    "editor.stickyTabStops": true
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.insertSpaces": true,
+  "editor.stickyTabStops": true
 }
