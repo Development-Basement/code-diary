@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ButtonHandler } from "../lib/types";
+import { ButtonHandler } from "@lib/types";
 
 export const TestComponent = () => {
   const [count, setCount] = useState(0);
