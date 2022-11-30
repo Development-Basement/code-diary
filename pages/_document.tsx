@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Document() {
   return (
-    <Html data-theme="dark">
+    <Html>
       <Head />
       <body>
         <Main />

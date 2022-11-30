@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TestComponent } from "../../components/testComponent";
 
 export default function index() {
@@ -9,6 +10,10 @@ export default function index() {
       </h1>
       <br />
       <TestComponent />
+      <br />
+      <Link className="link" href={"/"}>
+        go back
+      </Link>
     </div>
   );
 }
