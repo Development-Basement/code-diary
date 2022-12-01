@@ -9,6 +9,7 @@ const Home: NextPage = () => {
         <Link href={"./test"} className="link text">
           Test page
         </Link>
+        <p>My super duper change...</p>
       </p>
     </div>
   );
