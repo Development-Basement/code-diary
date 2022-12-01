@@ -14,6 +14,7 @@ export const TestComponent = () => {
       <button className="btn btn-secondary" onClick={onIncrementClickHandle}>
         increment
       </button>
+      <label>hi from Richard</label>
     </div>
   );
 };
