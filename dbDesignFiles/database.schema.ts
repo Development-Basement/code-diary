@@ -3,17 +3,17 @@
 
 type Record = {
   date: EpochTimeStamp; // timestamp(firebase type)
+  description: string; // a description of what the programmer did
   language: string; // programming language name
   minutesSpent: number; // number of minutes spent
   rating: number; // 0 - 5 stars
-  description: string; // a description of what the programmer did
   tags: Array<string>; // category/tag names
 };
 
 type Tag = {
-  tagColor: string; // HTML/HEX color code
-  name: string; // name of the tag, probably /[a-z-]/, 3 - 13 chars or so
   description: string; // tag description
+  name: string; // name of the tag, probably /[a-z-]/, 3 - 13 chars or so
+  tagColor: string; // HTML/HEX color code
 };
 
 export type DB = {
@@ -22,15 +22,16 @@ export type DB = {
       users: Map<string, string>; // UUID -> Username
     };
     $uuid: {
-      username: string;
       groups: Array<string>; // GroupID
+      invites: Map<string, string>; // GroupID, from (user)
       profileColor: string; // HTML/HEX color code
+      username: string;
     };
   };
   groups: {
     $group: {
-      allMembers: Array<string>; // UUID
       admins: Array<string>; //UUID
+      allMembers: Array<string>; // UUID
       _$uuid: {
         $recordId: Record;
       };
