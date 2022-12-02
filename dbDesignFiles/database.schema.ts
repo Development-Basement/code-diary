@@ -1,7 +1,7 @@
 // $prefix -> generic over following name
 // _prefix -> a collection
 
-type Post = {
+type Record = {
   date: EpochTimeStamp; // timestamp(firebase type)
   language: string; // programming language name
   minutesSpent: number; // number of minutes spent
@@ -32,7 +32,7 @@ export type DB = {
       allMembers: Array<string>; // UUID
       admins: Array<string>; //UUID
       _$uuid: {
-        postId: Post;
+        $recordId: Record;
       };
       _tags: {
         $tag: Tag;
@@ -41,8 +41,8 @@ export type DB = {
   };
   userPosts: {
     $uuid: {
-      _posts: {
-        postId: Post;
+      _records: {
+        $recordId: Record;
       };
       _tags: {
         $tag: Tag;
