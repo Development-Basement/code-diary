@@ -7,6 +7,11 @@ module.exports = {
     "./lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    colors: {
+      'lighter-dark': '#222222',
+      'color1': '#A174EB',
+      'gray': '#B0B0B0',
+    },
     extend: {},
   },
   plugins: [

@@ -9,6 +9,10 @@ const Home: NextPage = () => {
         <Link href={"./test"} className="link text">
           Test page
         </Link>
+        <br />
+        <Link href={"./login"} className="link text">
+          Login
+        </Link>
       </p>
     </div>
   );
