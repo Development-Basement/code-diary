@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import Button from "@components/Button";
+import Logo from "@components/Logo";
 
 const Home: NextPage = () => {
   return (
@@ -13,13 +13,7 @@ const Home: NextPage = () => {
           </Link>
         </p>
       </div>
-      {
-        // testing components
-      }
-      <Button text="my super button"></Button>
-      {
-        // testing components
-      }
+      <Logo rem={6}></Logo>
     </div>
   );
 };
