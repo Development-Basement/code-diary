@@ -11,6 +11,7 @@ module.exports = {
       "lighter-dark": "#242424",
       color1: "#A174EB",
       gray: "#B0B0B0",
+      ...require("tailwindcss/colors"),
     },
     extend: {
       height: {
@@ -48,13 +49,10 @@ module.exports = {
         },
       },
       "halloween",
-      "light",
       "dark",
       "synthwave",
-      "forest",
       "black",
       "luxury",
-      "dracula",
       "business",
       "night",
       "coffee",
