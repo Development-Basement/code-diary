@@ -2,22 +2,14 @@ import { NextPage } from "next";
 import Link from "next/link";
 import Logo from "@components/Logo";
 
-const Home: NextPage = () => {
+const Index: NextPage = () => {
   return (
-        <Link href={"./login"} className="link text">
-        </Link>
-    <div className="stack w-screen text-left bg-accent text-white">
-      <p>
-        Home <br />
-        <Link href={"./test"} className="link text">
-          Test page
-        <br />
-          Login
-        </Link>
-      </p>
-      <Logo rem={6}></Logo>
+    <div>
+      <Link href={"/login"}>Login</Link>
+      <br></br>
+      <Link href={"/home"}>Home</Link>
     </div>
   );
 };
 
-export default Home;
+export default Index;

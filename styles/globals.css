@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-*{
-  font-family: 'droid-sans', 'Inter';
+* {
+  font-family: "droid-sans", "Inter";
 }
