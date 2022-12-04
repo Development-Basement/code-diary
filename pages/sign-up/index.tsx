@@ -17,7 +17,7 @@ export default function index() {
           <p className="text-justify w-4/5">We've sent a verification email to the provided adress. Please make sure to also check the spam folder.</p>
           <p className="text-justify mt-4 w-4/5">Once you're finished click the button below.</p>
           <button className="mt-10 btn-secondary btn-wide mt-3 btn-sm w-full text-lighter-dark w-4/5 font-bold bg-violet-400" >Back to Login</button>
-          <p className="text-center font-bold text-secondary mt-5 w-4/5">I have not recived an email...</p>
+          <button className="w-2/5 text-secondary mt-3 font-bold">Forgotten password</button>
         </>}
       </div>
     </div>
