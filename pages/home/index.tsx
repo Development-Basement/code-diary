@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useContext } from "react";
-import { ThemeContext } from "../../data-layers/ThemeContext";
+import { ThemeContext } from "../../contexts/ThemeContext";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);
