@@ -1,7 +1,7 @@
 import { auth, db } from "@lib/firebase";
 import { converter, UserDoc } from "@lib/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
 export default function TestUserDoc() {
@@ -22,6 +22,13 @@ export default function TestUserDoc() {
         return undefined;
       });
       setDocData(document?.data());
+      // legal updates
+      setTimeout(async () => {
+        await updateDoc(docRef, { profileColor: "#606060" });
+      }, 5);
+      setTimeout(async () => {
+        await updateDoc(docRef, { profileColor: "#ccff00" });
+      }, 10);
     }
     getDocument();
   }, []);
@@ -32,7 +39,7 @@ export default function TestUserDoc() {
         <>
           groups: {docData.groups}
           <br />
-          invites: {/* eslint-disable-next-line quotes */}
+          invites:
           {JSON.stringify(docData.invites)
             .replaceAll(/"/g, " ")
             .replaceAll(/ :/g, ":")

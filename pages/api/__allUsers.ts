@@ -1,5 +1,5 @@
 import { aAuth, aFirestore } from "@lib/firebase-admin";
-import { converter } from "@lib/types";
+import { aConverter } from "@lib/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -30,7 +30,7 @@ export default async function handler(
   // Firestore test
   let document = await aFirestore
     .doc("users/allUsers")
-    .withConverter(converter<Data>())
+    .withConverter(aConverter<Data>())
     .get();
   let data = document.data();
   if (data === undefined || data.users === undefined) {

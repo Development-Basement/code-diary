@@ -3,6 +3,11 @@ import {
   FirestoreDataConverter,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
+import {
+  QueryDocumentSnapshot as AQueryDocumentSnapshot,
+  DocumentData as ADocumentData,
+  FirestoreDataConverter as AFirestoreDataConverter,
+} from "firebase-admin/firestore";
 import React from "react";
 
 export type ButtonHandler = (
@@ -11,9 +16,18 @@ export type ButtonHandler = (
 
 // Firestore
 
-type FirestoreSnapshot = QueryDocumentSnapshot<DocumentData>;
+type FirestoreSnapshot =
+  | AQueryDocumentSnapshot<ADocumentData>
+  | QueryDocumentSnapshot<DocumentData>;
 export type FirestoreMap<T> = {
   [P: string]: T;
+};
+
+export const aConverter = <T>() => {
+  return {
+    toFirestore: (data: T) => data,
+    fromFirestore: (snap: FirestoreSnapshot) => snap.data() as T,
+  } as AFirestoreDataConverter<T>;
 };
 
 export const converter = <T>() => {
