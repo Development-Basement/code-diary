@@ -18,7 +18,8 @@
       "@components/*": ["./components/*"],
       "@contexts/*": ["./contexts/*"],
       "@lib/*": ["./lib/*"],
-      "@styles/*": ["./styles/*"]
+      "@styles/*": ["./styles/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "lib/types.d.ts", "**/*.ts", "**/*.tsx"],
