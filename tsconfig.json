@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
     "lib": ["dom", "dom.iterable", "esnext", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,7 +18,8 @@
       "@components/*": ["./components/*"],
       "@contexts/*": ["./contexts/*"],
       "@lib/*": ["./lib/*"],
-      "@styles/*": ["./styles/*"]
+      "@styles/*": ["./styles/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "lib/types.d.ts", "**/*.ts", "**/*.tsx"],

@@ -1,5 +1,5 @@
 import React, { createContext, useMemo, useState } from "react";
-import useCustomEffect from "../hooks/useCustomEffect.hook";
+import useCustomEffect from "@hooks/useCustomEffect.hook";
 
 export interface ThemeContextProps {
   theme: string;

@@ -1,11 +1,17 @@
-import React, { useRef } from "react";
-/*
-import { TextInputField } from "../lib/types";
+import React, { FC, useRef } from "react";
 
+type TestComponentProps = {
+  placeholder: string;
+  cosi: number;
+  other: boolean;
+  thingie: Array<number>;
+};
 
-export const TestComponent = (props) => {
-  const ref = React.useRef<HTMLInputElement>(null);
-  return (
-    <input placeholder={props.placeholder} onChange={(event, ref) => ref(event.han)}></input>
-  );
-};*/
+export const TestComponent: FC<TestComponentProps> = ({
+  placeholder,
+  cosi,
+  ...props
+}) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  return <input placeholder={placeholder} ref={inputRef}></input>;
+};
