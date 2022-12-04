@@ -5,7 +5,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
 export default function TestUserDoc() {
-  let [docData, setDocData] = useState<UserDoc>();
+  const [docData, setDocData] = useState<UserDoc>();
 
   useEffect(() => {
     async function getDocument() {
@@ -14,10 +14,10 @@ export default function TestUserDoc() {
         "mistradam@post.cz",
         "qwerty",
       );
-      let docRef = doc(db, "users", credential.user.uid).withConverter(
+      const docRef = doc(db, "users", credential.user.uid).withConverter(
         converter<UserDoc>(),
       );
-      let document = await getDoc(docRef).catch((e) => {
+      const document = await getDoc(docRef).catch((e) => {
         console.error(e.message);
         return undefined;
       });

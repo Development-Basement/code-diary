@@ -28,11 +28,11 @@ export default async function handler(
     }
   }
   // Firestore test
-  let document = await aFirestore
+  const document = await aFirestore
     .doc("users/allUsers")
     .withConverter(aConverter<Data>())
     .get();
-  let data = document.data();
+  const data = document.data();
   if (data === undefined || data.users === undefined) {
     res.status(404).end();
     return;
