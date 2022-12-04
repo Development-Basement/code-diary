@@ -4,15 +4,17 @@ import Logo from "@components/Logo";
 
 const Home: NextPage = () => {
   return (
-    <div>
-      <div className="stack w-screen text-left bg-primary text-white">
-        <p>
-          Home <br />
-          <Link href={"./test"} className="link text">
-            Test page
-          </Link>
-        </p>
-      </div>
+        <Link href={"./login"} className="link text">
+        </Link>
+    <div className="stack w-screen text-left bg-accent text-white">
+      <p>
+        Home <br />
+        <Link href={"./test"} className="link text">
+          Test page
+        <br />
+          Login
+        </Link>
+      </p>
       <Logo rem={6}></Logo>
     </div>
   );
