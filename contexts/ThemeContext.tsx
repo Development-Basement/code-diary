@@ -1,43 +1,66 @@
-import React, { createContext, useMemo, useState } from "react";
-import useCustomEffect from "@hooks/useCustomEffect.hook";
+import React, {
+  createContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 
-// ENHANCE: a way easier hook, using Next's <Html> component\
-// (instead of document.getElementsByTagName())
+export type Theme =
+  | "forest"
+  | "dracula"
+  | "saphire"
+  | "light"
+  | "halloween"
+  | "dark"
+  | "synthwave"
+  | "black"
+  | "luxury"
+  | "business"
+  | "night"
+  | "coffee";
+
+export const DEFAULT_THEME: Theme = "halloween";
+
+const useCustomEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
+// for SOME reason, the undefined has to be a string
+// to not give warning about using useEffect on the server
+// :shrug:
 
 export type ThemeContextProps = {
-  theme: string;
-  setTheme: (theme: string) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 };
 
 export const ThemeContext = createContext<ThemeContextProps>({
-  theme: "default",
+  theme: DEFAULT_THEME,
   setTheme: () => {},
 });
 
 export const ThemeContextProvider = ({
-  value = "default",
+  value = DEFAULT_THEME,
   children,
 }: {
-  value?: string;
+  value: Theme;
   children: React.ReactNode;
 }) => {
   const [theme, setTheme] = useState(value);
 
   useCustomEffect(() => {
-    const storeTheme = localStorage.getItem("theme");
-    applyTheme(storeTheme || "default");
+    const storeTheme = localStorage.getItem("theme") as Theme | null;
+    applyTheme(storeTheme || DEFAULT_THEME);
   }, []);
 
   /**
    * Apply theme to 'html' tag on DOM.
    */
-  const applyTheme = (theme = "default") => {
+  const applyTheme = (theme: Theme = DEFAULT_THEME) => {
     const html = document.getElementsByTagName("html")[0];
     localStorage.setItem("theme", theme);
     html.setAttribute("data-theme", theme);
   };
 
-  const handleThemeChange = (theme: string) => {
+  const handleThemeChange = (theme: Theme) => {
     setTheme(theme);
     applyTheme(theme);
   };
@@ -45,14 +68,10 @@ export const ThemeContextProvider = ({
   /**
    * Current context value for theme.
    */
-  const val = useMemo(
-    () => ({
-      theme,
-      setTheme: handleThemeChange,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme],
-  );
+  const val = {
+    theme,
+    setTheme: handleThemeChange,
+  };
 
   return <ThemeContext.Provider value={val}>{children}</ThemeContext.Provider>;
 };
