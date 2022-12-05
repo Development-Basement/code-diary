@@ -21,8 +21,8 @@ export type DB = {
     accountInfo: {
       _private: {
         $uuid: {
-          groups: Array<string>; // GroupID
-          invites: Map<string, string>; // GroupID, from (user)
+          groups: Array<string>; // groupName
+          invites: Map<string, string>; // groupName, from (user)
         };
       };
       _public: {
@@ -34,8 +34,8 @@ export type DB = {
     };
   };
   groups: {
-    $group: {
-      admins: Array<string>; //UUID
+    $groupName: {
+      admins: Array<string>; // UUID
       allMembers: Array<string>; // UUID
       _$uuid: {
         $recordId: Record;

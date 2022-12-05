@@ -9,6 +9,13 @@ service cloud.firestore {
           allow update: if isUserWithId(userId) && isUserPublicDocUpdateValid()
           allow delete: if false // handled through an api route
         }
+
+        match /private/{userId} {
+        	allow read: if isUserWithId(userId)
+          allow create: if isUserWithId(userId) && isUserPrivateDocCreateValid()
+          allow update: if false // handled through an api route
+          allow delete: if false // handled through an api route
+        }
     	}
   	}
 
@@ -16,19 +23,36 @@ service cloud.firestore {
 			return request.auth.uid != null && request.auth.uid == userId
 		}
 
+		function isUsernameValid(username) {
+    	let isAllowedChars = username is string && username.matches("/[A-Za-z0-9-_]{3,15}/");
+      // NOT checking if username is unique
+      return isAllowedChars
+    }
+
     function isUserPublicDocCreateValid() {
-      let hasOnlyValidFields = request.resource.keys.hasOnly(["username", "profileColor"])
-    		&& request.resource.keys.hasAll(["username", "profileColor"]);
-    	let areTypesCorrect = request.resource.username is string
-      	&& request.resource.profileColor is string;
+      let hasOnlyValidFields = request.resource.data.keys.hasOnly(["username", "profileColor"])
+    		&& request.resource.data.keys.hasAll(["username", "profileColor"]);
+    	let areTypesCorrect = request.resource.data.username is string
+      	&& isUsernameValid(request.resource.data.username)
+      	&& request.resource.data.profileColor is string;
       return hasOnlyValidFields && areTypesCorrect;
     }
 
     function isUserPublicDocUpdateValid() {
-      let hasOnlyValidFields = request.resource.keys.hasOnly(["username", "profileColor"]);
-    	let areTypesCorrect = (request.resource.username == null || request.resource.username is string)
-      	&& (request.resource.profileColor == null || request.resource.profileColor is string);
+      let hasOnlyValidFields = request.resource.data.keys.hasOnly(["username", "profileColor"]);
+    	let areTypesCorrect = (request.resource.data.username == null || isUsernameValid(request.resource.data.username))
+      	&& (request.resource.data.profileColor == null || request.resource.data.profileColor is string);
       return hasOnlyValidFields && areTypesCorrect;
+    }
+
+    function isUserPrivateDocCreateValid() {
+    	let hasOnlyValidFields = request.resource.data.keys.hasOnly(["groups", "invites"])
+    		&& request.resource.data.keys.hasAll(["groups", "invites"]);
+    	let areTypesCorrect = request.resource.data.invites is list
+      	&& request.resource.data.profileColor is map;
+      let areValuesCorrect = request.resource.data.invites.size() == 0
+      	&& request.resource.data.groups.size() == 0;
+      return hasOnlyValidFields && areTypesCorrect && areValuesCorrect;
     }
   }
 }
