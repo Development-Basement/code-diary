@@ -1,29 +1,18 @@
 import { NextPage } from "next";
-import { useContext } from "react";
 import { ThemeContext } from "../../contexts/ThemeContext";
+import Navbar from "@components/Navbar";
+import { useContext, useState } from "react";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);
+  const [navbarOpen, setNavbarOpen] = useState(true);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <div className="flex flex-auto bg-primary">sdfds</div>
-      <button
-        onClick={() => {
-          setTheme("luxury");
-        }}
-      >
-        luxury
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          setTheme("halloween");
-        }}
-      >
-        haloween
-      </button>
-    </div>
+    <>
+      <div style={{ width: "100vw", height: "100vh" }}>
+        <Navbar currentDirectory="Albert's notes"></Navbar>
+      </div>
+    </>
   );
 };
 
