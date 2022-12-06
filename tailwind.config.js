@@ -24,7 +24,19 @@ module.exports = {
     themes: [
       "forest",
       "dracula",
-      { saphire: {} },
+      {
+        saphire: {
+          primary: "#A174EB", // Action - Main
+          secondary: "#5FBC6E", // Important
+          accent: "#000000",
+          neutral: "#1A1A1A", // Dark - Main
+          "base-100": "#212121", // Background - Dark
+          info: "#000000",
+          success: "#000000",
+          warning: "#000000",
+          error: "#000000",
+        },
+      },
       "light",
       "halloween",
       "dark",
