@@ -1,13 +1,13 @@
 import {
+  DocumentData as ADocumentData,
+  FirestoreDataConverter as AFirestoreDataConverter,
+  QueryDocumentSnapshot as AQueryDocumentSnapshot,
+} from "firebase-admin/firestore";
+import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
-import {
-  QueryDocumentSnapshot as AQueryDocumentSnapshot,
-  DocumentData as ADocumentData,
-  FirestoreDataConverter as AFirestoreDataConverter,
-} from "firebase-admin/firestore";
 import React from "react";
 
 export type ButtonHandler = (
@@ -39,19 +39,22 @@ export const converter = <T>() => {
 
 // Database
 
-type UserId = string;
-type GroupId = string;
-type Color = string;
+export type UserId = string;
+export type GroupId = string;
+export type Color = string;
 
 export type AllUsersDoc = {
   /** UserId -> string */
   users: FirestoreMap<UserId>;
 };
 
-export type UserDoc = {
+export type UserPublicDoc = {
+  profileColor: Color;
+  username: string;
+};
+
+export type UserPrivateDoc = {
   groups: Array<GroupId>;
   /** GroupId -> UserId */
   invites: FirestoreMap<UserId>;
-  profileColor: Color;
-  username: string;
 };

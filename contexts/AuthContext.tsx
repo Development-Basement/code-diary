@@ -1,92 +1,117 @@
-import React, { useContext, useState, useEffect } from "react";
+import { auth, db } from "@lib/firebase";
 
-import { auth, db } from "../lib/firebase";
+import {
+  Color,
+  converter,
+  FirestoreMap,
+  GroupId,
+  UserId,
+  UserPrivateDoc,
+  UserPublicDoc,
+} from "@lib/types";
+
+import { createUserWithEmailAndPassword, User } from "firebase/auth";
+
 import {
   collection,
   doc,
   getDocs,
-  getDoc,
+  limit,
+  onSnapshot,
+  query,
   setDoc,
   updateDoc,
-  query,
-  onSnapshot,
   where,
-  deleteDoc,
 } from "firebase/firestore";
+
+import React, { useContext, useEffect, useState } from "react";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  updatePassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-} from "firebase/auth";
+export type AuthContextProps = {
+  currentUser: User | null;
+  userData: (UserPublicDoc & UserPrivateDoc) | null;
+  createAccountWithEmail: (
+    username: string,
+    email: string,
+    password: string,
+    profileColor?: Color,
+  ) => Promise<void>;
+  changeUsername: (newUsername: string) => Promise<void>;
+};
 
-import firebaseApp from "../lib/firebase";
-import { Auth } from "firebase-admin/auth";
-
-const AuthContext = React.createContext({});
+const AuthContext = React.createContext<AuthContextProps>({
+  currentUser: null,
+  userData: null,
+  createAccountWithEmail: async ({}) => {
+    console.error(
+      "createAccountWithEmail called too soon! (this should never happen)",
+    );
+  },
+  changeUsername: async ({}) => {
+    console.error("changeUsername called too soon! (this should never happen)");
+  },
+});
 
 export function useAuth() {
   return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }: { children: JSX.Element }) {
-  const auth = getAuth(firebaseApp);
+  const [user, , error] = useAuthState(auth);
 
-  const [user, loading, error] = useAuthState(auth);
+  const [username, setUsername] = useState<string | null>(null);
+  const [profileColor, setProfileColor] = useState<Color | null>(null);
+  const [groups, setGroups] = useState<Array<GroupId>>([]);
+  const [invites, setInvites] = useState<FirestoreMap<UserId>>({});
 
-  const usersRef = collection(db, "users");
-
-  type basicUserDataType = {
-    email: string;
-    password: string;
-  };
-
-  interface createUserDataType extends basicUserDataType {
-    username: string;
+  function generateRandomColor(): Color {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
-  async function createAccount({
-    email,
-    username,
-    password,
-  }: createUserDataType) {
-    await createUserWithEmailAndPassword(auth, email, password).then(
-      async (response) => {
-        await setDoc(doc(db, "users/accountInfo/_public/", response.user.uid), {
-          email,
-          username,
-        });
-      },
-    );
+  function getPublicDocRef(uid: string) {
+    const ref = doc(db, "users", "accountInfo", "public", uid);
+    return ref.withConverter(converter<UserPublicDoc>());
   }
 
-  async function login({ email, password }: basicUserDataType) {
-    if (email) await signInWithEmailAndPassword(auth, email, password);
+  function getPrivateDocRef(uid: string) {
+    const ref = doc(db, "users", "accountInfo", "private", uid);
+    return ref.withConverter(converter<UserPrivateDoc>());
   }
 
-  async function logout() {
-    await signOut(auth);
+  async function isUsernameInUserDatabase(username: string) {
+    const q = query(
+      collection(db, "users", "accountInfo", "public"),
+      where("username", "==", username),
+      limit(1),
+    ).withConverter(converter<UserPublicDoc>());
+    let response = false;
+    await getDocs(q).then((res) => {
+      response = !res.docs.every((_doc) => _doc.id === user?.uid);
+    });
+    return response;
   }
 
-  async function resetPassword(email: string) {
-    try {
-      await sendPasswordResetEmail(auth, email);
-    } catch (error) {
-      throw new Error("User not in database");
+  async function createAccountWithEmail(
+    email: string,
+    username: string,
+    password: string,
+    profileColor?: Color,
+  ) {
+    if (username.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+      throw new Error("Username is not valid");
     }
-  }
-
-  async function changePassword(newPassword: string) {
-    // should only be called by current user and shortly after authenticating
-    if (user) await updatePassword(user, newPassword);
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    await Promise.all([
+      setDoc(getPublicDocRef(res.user.uid), {
+        username,
+        profileColor: profileColor || generateRandomColor(),
+      }),
+      setDoc(getPrivateDocRef(res.user.uid), {
+        groups: [],
+        invites: {},
+      }),
+    ]);
   }
 
   async function changeUsername(newUsername: string) {
@@ -94,44 +119,78 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       throw new Error("Username already in database");
     }
     if (user) {
-      const userDoc = await getDoc(
-        doc(db, "users/accountInfo/_public/", user.uid),
-      );
-      if (userDoc) {
-        await updateDoc(doc(db, "users/accountInfo/_public/", userDoc.id), {
-          username: newUsername,
-        });
-      } else {
-        throw new Error("User not in database");
+      if (newUsername.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+        throw new Error("Username is not valid");
       }
+      await updateDoc(getPublicDocRef(user.uid), {
+        username: newUsername,
+      });
     }
   }
 
-  async function isUsernameInUserDatabase(username: string) {
-    const q = query(usersRef, where("username", "==", username));
-    let response = false;
-    await getDocs(q).then((docs) => {
-      response = !docs.empty;
-    });
-    return response;
-  }
+  useEffect(() => {
+    if (user) {
+      const pubUnsub = onSnapshot(
+        getPublicDocRef(user.uid),
+        (pubDoc) => {
+          const data = pubDoc.data();
+          if (data === undefined) {
+            return;
+          }
+          setUsername(data.username);
+          setProfileColor(data.profileColor);
+        },
+        (err) => {
+          console.error(err.message, err.cause);
+          console.debug(err);
+        },
+      );
+      const privUnsub = onSnapshot(
+        getPrivateDocRef(user.uid),
+        (privDoc) => {
+          const data = privDoc.data();
+          if (data === undefined) {
+            return;
+          }
+          setGroups(data.groups);
+          setInvites(data.invites);
+        },
+        (err) => {
+          console.error(err.message, err.cause);
+          console.debug(err);
+        },
+      );
+      return () => {
+        privUnsub();
+        pubUnsub();
+      };
+    }
+    setUsername(null);
+    setProfileColor(null);
+    setInvites({});
+    setGroups([]);
+  }, [user]);
 
-  const value = {
-    user,
-    createAccount,
-    login,
-    logout,
-    resetPassword,
-    changePassword,
+  const value: AuthContextProps = {
+    currentUser: user === undefined ? null : user,
+    userData:
+      username === null || profileColor === null
+        ? null
+        : {
+            username,
+            profileColor,
+            groups,
+            invites,
+          },
+    createAccountWithEmail,
     changeUsername,
   };
 
+  // TODO: better error handling here, probably a toast
   return (
     <AuthContext.Provider value={value}>
-      <>{!loading && !error && user && children}</>
-      <>{error && <p>error</p>}</>
-      <>{loading && <p>loading</p>}</>
-      <>{!user && <p>no user</p>}</>
+      {children}
+      {error && <p>error</p>}
     </AuthContext.Provider>
   );
 }
