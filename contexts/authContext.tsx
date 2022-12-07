@@ -1,5 +1,4 @@
 import { auth, db } from "@lib/firebase";
-
 import {
   Color,
   converter,
@@ -9,9 +8,7 @@ import {
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
-
 import { createUserWithEmailAndPassword, User } from "firebase/auth";
-
 import {
   collection,
   doc,
@@ -23,9 +20,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-
 import React, { useContext, useEffect, useState } from "react";
-
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export type AuthContextProps = {
@@ -40,18 +35,9 @@ export type AuthContextProps = {
   changeUsername: (newUsername: string) => Promise<void>;
 };
 
-const AuthContext = React.createContext<AuthContextProps>({
-  currentUser: null,
-  userData: null,
-  createAccountWithEmail: async ({}) => {
-    console.error(
-      "createAccountWithEmail called too soon! (this should never happen)",
-    );
-  },
-  changeUsername: async ({}) => {
-    console.error("changeUsername called too soon! (this should never happen)");
-  },
-});
+const AuthContext = React.createContext<AuthContextProps>(
+  {} as AuthContextProps,
+);
 
 export function useAuth() {
   return useContext(AuthContext);

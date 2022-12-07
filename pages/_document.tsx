@@ -1,10 +1,23 @@
-import { DEFAULT_THEME } from "@contexts/ThemeContext";
-import { Html, Head, Main, NextScript } from "next/document";
-import React from "react";
+import { DEFAULT_THEME, possibleThemes, Theme } from "@contexts/themeContext";
+import { GetServerSideProps } from "next";
+import { Head, Html, Main, NextScript } from "next/document";
 
-export default function Document() {
+export const getServerSideProps: GetServerSideProps<{ theme: Theme }> = async (
+  ctx,
+) => {
+  console.log(ctx.req.cookies);
+  const inCookie = ctx.req.cookies["theme"];
+  const theme = possibleThemes.includes(inCookie as Theme) // workaround
+    ? (inCookie as Theme) // it is definitely a theme
+    : DEFAULT_THEME;
+  return {
+    props: { theme: theme },
+  };
+};
+
+export default function Document(props: { theme: Theme }) {
   return (
-    <Html data-theme={DEFAULT_THEME}>
+    <Html data-theme={props.theme}>
       <Head>
         <link
           rel="stylesheet"
@@ -14,6 +27,7 @@ export default function Document() {
       </Head>
       <body>
         <Main />
+        {props.theme}
         <NextScript />
       </body>
     </Html>

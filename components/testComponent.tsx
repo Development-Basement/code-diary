@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { ButtonHandler } from "@lib/types";
+import { useState } from "react";
 
 export const TestComponent = () => {
   const [count, setCount] = useState(0);
@@ -11,7 +11,7 @@ export const TestComponent = () => {
     <div className="alert alert-info w-80">
       TestComponent <br />
       Count: {count} <br />
-      <button className="btn btn-secondary" onClick={onIncrementClickHandle}>
+      <button className="btn-secondary btn" onClick={onIncrementClickHandle}>
         increment
       </button>
     </div>

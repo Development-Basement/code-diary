@@ -1,6 +1,6 @@
+import Navbar from "@components/navbar";
+import { ThemeContext } from "@contexts/themeContext";
 import { NextPage } from "next";
-import { ThemeContext } from "../../contexts/themeContext";
-import Navbar from "@components/Navbar";
 import { useContext, useState } from "react";
 
 const Home: NextPage = () => {

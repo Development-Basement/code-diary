@@ -1,5 +1,5 @@
-import React, { FC } from "react";
 import { Code } from "@mui/icons-material";
+import { FC } from "react";
 
 type LogoProps = {
   rem?: number;

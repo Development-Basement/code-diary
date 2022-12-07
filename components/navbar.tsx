@@ -1,6 +1,6 @@
 import { Add } from "@mui/icons-material";
 import { FC } from "react";
-import Logo from "./Logo";
+import Logo from "./logo";
 
 type NavbarProps = {
   currentDirectory?: string;
