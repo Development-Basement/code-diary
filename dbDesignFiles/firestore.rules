@@ -24,7 +24,7 @@ service cloud.firestore {
 		}
 
 		function isUsernameValid(username) {
-    	let isAllowedChars = username is string && username.matches("/[A-Za-z0-9-_]{3,15}/");
+    	let isAllowedChars = username.matches("[A-Za-z0-9-_]{3,15}");
       // NOT checking if username is unique
       return isAllowedChars
     }
@@ -39,7 +39,7 @@ service cloud.firestore {
     }
 
     function isUserPublicDocUpdateValid() {
-      let hasOnlyValidFields = request.resource.data.keys.hasOnly(["username", "profileColor"]);
+      let hasOnlyValidFields = request.resource.data.keys().hasOnly(["username", "profileColor"]);
     	let areTypesCorrect = (request.resource.data.username == null || isUsernameValid(request.resource.data.username))
       	&& (request.resource.data.profileColor == null || request.resource.data.profileColor is string);
       return hasOnlyValidFields && areTypesCorrect;
