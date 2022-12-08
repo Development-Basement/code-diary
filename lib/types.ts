@@ -55,6 +55,5 @@ export type UserPublicDoc = {
 
 export type UserPrivateDoc = {
   groups: Array<GroupId>;
-  /** GroupId -> UserId */
-  invites: FirestoreMap<UserId>;
+  invites: Array<GroupId>;
 };

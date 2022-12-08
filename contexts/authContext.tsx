@@ -2,9 +2,7 @@ import { auth, db } from "@lib/firebase";
 import {
   Color,
   converter,
-  FirestoreMap,
   GroupId,
-  UserId,
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
@@ -23,9 +21,16 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-export type AuthContextProps = {
+type UserData = {
+  username: string | null;
+  profileColor: Color | null;
+  invites: Array<GroupId>;
+  groups: Array<GroupId>;
+};
+
+type AuthContextProps = {
   currentUser: User | null;
-  userData: (UserPublicDoc & UserPrivateDoc) | null;
+  userData: UserData;
   createAccountWithEmail: (
     username: string,
     email: string,
@@ -49,7 +54,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   const [username, setUsername] = useState<string | null>(null);
   const [profileColor, setProfileColor] = useState<Color | null>(null);
   const [groups, setGroups] = useState<Array<GroupId>>([]);
-  const [invites, setInvites] = useState<FirestoreMap<UserId>>({});
+  const [invites, setInvites] = useState<Array<GroupId>>([]);
 
   function generateRandomColor(): Color {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);
@@ -95,7 +100,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       }),
       setDoc(getPrivateDocRef(res.user.uid), {
         groups: [],
-        invites: {},
+        invites: [],
       }),
     ]);
   }
@@ -153,21 +158,18 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
     }
     setUsername(null);
     setProfileColor(null);
-    setInvites({});
+    setInvites([]);
     setGroups([]);
   }, [user]);
 
   const value: AuthContextProps = {
     currentUser: user === undefined ? null : user,
-    userData:
-      username === null || profileColor === null
-        ? null
-        : {
-            username,
-            profileColor,
-            groups,
-            invites,
-          },
+    userData: {
+      username,
+      profileColor,
+      groups,
+      invites,
+    },
     createAccountWithEmail,
     changeUsername,
   };
