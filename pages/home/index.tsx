@@ -1,20 +1,26 @@
 import { NextPage } from "next";
 import { useContext } from "react";
-import { ThemeContext } from "../../contexts/ThemeContext";
+
 import Logo from "../../components/Logo";
-import React from "react";
+
 import { Note } from "../../components/Note";
+
+import { ThemeContext } from "../../contexts/ThemeContext";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <div className="flex flex-auto h-[5%] bg-neutral drop-shadow-lg"><Logo /></div>
-      <div className="flex h-[95%] bg-base-100">
-        <div className="w-1/5 bg-neutral h-full">
-          <h2 className="text-[190%]">Teams</h2>
-          <h2 className="text-[190%]">Categories</h2>
+    <div className="flex h-screen w-screen flex-col">
+      <div className="flex h-16 flex-row gap-x-4 bg-neutral drop-shadow-lg">
+        <span className="mx-3">
+          <Logo rem={2} />
+        </span>
+      </div>
+      <div className="flex overflow-y-hidden bg-base-100">
+        <nav className="h-screen w-96 bg-neutral">
+          <h2 className="text-3xl">Teams</h2>
+          <h2 className="text-3xl">Categories</h2>
           <button
             onClick={() => {
               setTheme("luxury");
@@ -30,8 +36,10 @@ const Home: NextPage = () => {
           >
             haloween
           </button>
-        </div>
-        <div className="w-1/2 ml-[15%] bg-neutral h-full">
+        </nav>
+        <div className="mx-auto w-1/2 overflow-y-auto bg-neutral">
+          <Note />
+          <Note />
           <Note />
           <Note />
           <Note />
@@ -42,4 +50,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
