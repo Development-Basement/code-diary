@@ -10,9 +10,9 @@ export const possibleThemes = [
   "business",
   "night",
   "coffee",
-  // "forest",
-  // "dracula",
-  // "light",
+  "forest",
+  "dracula",
+  "light",
 ] as const;
 
 export type Theme = typeof possibleThemes[number];
@@ -32,7 +32,7 @@ export type ThemeContextProps = {
 
 export const ThemeContext = createContext<ThemeContextProps>({
   theme: DEFAULT_THEME,
-  setTheme: () => { },
+  setTheme: () => {},
 });
 
 export const ThemeContextProvider = ({

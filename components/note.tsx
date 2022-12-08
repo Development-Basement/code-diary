@@ -1,7 +1,7 @@
 import { AccountCircle } from "@mui/icons-material";
 
 const Note = () => {
-  //data for component creation
+  // data for component creation
   const name = "Richard Materna";
   const language = "C++";
   const duration = 45;
@@ -11,7 +11,7 @@ const Note = () => {
   const tag = "important";
 
   return (
-    <div className="flex items-start">
+    <div className="flex snap-start items-start bg-base-100">
       <div className="w-[25%]">
         <AccountCircle className="h-[90%] w-[90%]" />
       </div>
@@ -27,34 +27,39 @@ const Note = () => {
         <p>{text}</p>
         <p>{tag}</p>
 
-        <div className="rating">
+        <form className="rating">
           <input
             type="radio"
             name="rating-4"
             className="mask mask-star-2 bg-success"
+            disabled
           />
           <input
             type="radio"
             name="rating-4"
             className="mask mask-star-2 bg-success"
+            disabled
           />
           <input
             type="radio"
             name="rating-4"
             className="mask mask-star-2 bg-success"
+            disabled
           />
           <input
             type="radio"
             name="rating-4"
-            className="mask mask-star-2 bg-success "
+            className="mask mask-star-2 bg-success"
+            disabled
             checked
           />
           <input
             type="radio"
             name="rating-4"
             className="mask mask-star-2 bg-success"
+            disabled
           />
-        </div>
+        </form>
       </div>
     </div>
   );
