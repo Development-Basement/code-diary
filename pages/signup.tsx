@@ -6,19 +6,19 @@ export default function index() {
   const PostSignUp = () => {
     return (
       <>
-        <p className="text-justify text-sm w-7/12">
-          We've sent a verification email to the provided adress. Please
+        <p className="w-7/12 text-justify text-sm">
+          We&apos;ve sent a verification email to the provided adress. Please
           make sure to also check spam folder.
         </p>
-        <p className="text-justify text-sm mt-4 w-7/12">
-          Once you're finished click the button below.
+        <p className="mt-4 w-7/12 text-justify text-sm">
+          Once you&apos;re finished click the button below.
         </p>
-        <Link className="no-underline w-full text-center" href={"./login"}>
-          <button className="mt-6 btn btn-outline btn-primary w-7/12 btn-sm rounded">
+        <Link className="w-full text-center no-underline" href={"./login"}>
+          <button className="btn-outline btn-primary btn-sm btn mt-6 w-7/12 rounded">
             Back to Login
           </button>
         </Link>
-        <button className="w-7/12 text-primary mt-8 font-bold">
+        <button className="mt-8 w-7/12 font-bold text-primary">
           I have not received an email...
         </button>
       </>
@@ -26,9 +26,9 @@ export default function index() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="p-10 content-center h-5/12 min-h-[200px] w-2/5 grid place-items-center shadow shadow-slate-600 rounded-[15px]">
-        <h1 className="text-3xl font-semibold mb-5">Sign Up</h1>
+    <div className="flex h-screen items-center justify-center">
+      <div className="h-5/12 grid min-h-[200px] w-2/5 place-items-center content-center rounded-[15px] p-10 shadow shadow-slate-600">
+        <h1 className="mb-5 text-3xl font-semibold">Sign Up</h1>
         {!sent ? (
           <form action="/api/form" method="post" className="w-full text-center">
             <input
@@ -36,7 +36,7 @@ export default function index() {
               id="1"
               required
               placeholder="email"
-              className="mt-3 input input-bordered input-primary input-sm w-7/12 rounded"
+              className="input-bordered input-primary input input-sm mt-3 w-7/12 rounded"
             />
             <br />
             <input
@@ -44,7 +44,7 @@ export default function index() {
               id="2"
               required
               placeholder="username"
-              className="mt-3 input input-bordered input-primary input-sm w-7/12 rounded"
+              className="input-bordered input-primary input input-sm mt-3 w-7/12 rounded"
             />
             <br />
             <input
@@ -52,7 +52,7 @@ export default function index() {
               id="3"
               required
               placeholder="password"
-              className="mt-3 input input-bordered input-primary input-sm w-7/12 rounded"
+              className="input-bordered input-primary input input-sm mt-3 w-7/12 rounded"
             />
             <br />
             <input
@@ -60,17 +60,19 @@ export default function index() {
               id="4"
               required
               placeholder="password again"
-              className="mt-3 input input-bordered input-primary input-sm w-7/12 rounded"
+              className="input-bordered input-primary input input-sm mt-3 w-7/12 rounded"
             />
             <br />
             <button
               type="submit"
-              className="btn-primary mt-3 btn-sm text-lighter-dark font-bold w-7/12 rounded"
+              className="btn-primary btn-sm mt-3 w-7/12 rounded font-bold text-lighter-dark"
             >
               Send Verification Email
             </button>
           </form>
-        ) : <PostSignUp />}
+        ) : (
+          <PostSignUp />
+        )}
       </div>
     </div>
   );

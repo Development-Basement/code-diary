@@ -22,10 +22,8 @@ module.exports = {
   ],
   daisyui: {
     themes: [
-      "forest",
-      "dracula",
       {
-        saphire: {
+        sapphire: {
           primary: "#A174EB", // Action - Main
           secondary: "#5FBC6E", // Important
           accent: "#000000",
@@ -37,7 +35,6 @@ module.exports = {
           error: "#000000",
         },
       },
-      "light",
       "halloween",
       "dark",
       "synthwave",
@@ -46,6 +43,9 @@ module.exports = {
       "business",
       "night",
       "coffee",
+      // "forest",
+      // "dracula",
+      // "light",
     ],
   },
 };

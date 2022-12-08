@@ -1,6 +1,6 @@
 import { AccountCircle } from "@mui/icons-material";
 
-export const Note = () => {
+const Note = () => {
   //data for component creation
   const name = "Richard Materna";
   const language = "C++";
@@ -59,3 +59,5 @@ export const Note = () => {
     </div>
   );
 };
+
+export default Note;

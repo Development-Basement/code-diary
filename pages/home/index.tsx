@@ -1,11 +1,8 @@
+import Logo from "@components/logo";
+import Note from "@components/note";
+import { ThemeContext } from "@contexts/themeContext";
 import { NextPage } from "next";
 import { useContext } from "react";
-
-import Logo from "../../components/Logo";
-
-import { Note } from "../../components/Note";
-
-import { ThemeContext } from "../../contexts/ThemeContext";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);

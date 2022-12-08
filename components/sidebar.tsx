@@ -5,6 +5,8 @@ export type SidebarProps = {
   groups: Array<GroupId>;
 };
 
-export const Sidebar: FC<SidebarProps> = () => {
+const Sidebar: FC<SidebarProps> = () => {
   return <></>;
 };
+
+export default Sidebar;

@@ -48,10 +48,13 @@ export type AllUsersDoc = {
   users: FirestoreMap<UserId>;
 };
 
-export type UserDoc = {
+export type UserPublicDoc = {
+  profileColor: Color;
+  username: string;
+};
+
+export type UserPrivateDoc = {
   groups: Array<GroupId>;
   /** GroupId -> UserId */
   invites: FirestoreMap<UserId>;
-  profileColor: Color;
-  username: string;
 };

@@ -1,25 +1,23 @@
-import React, {
-  createContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import { createContext, useEffect, useLayoutEffect, useState } from "react";
 
-export type Theme =
-  | "forest"
-  | "dracula"
-  | "saphire"
-  | "light"
-  | "halloween"
-  | "dark"
-  | "synthwave"
-  | "black"
-  | "luxury"
-  | "business"
-  | "night"
-  | "coffee";
+export const possibleThemes = [
+  "sapphire",
+  "halloween",
+  "dark",
+  "synthwave",
+  "black",
+  "luxury",
+  "business",
+  "night",
+  "coffee",
+  // "forest",
+  // "dracula",
+  // "light",
+] as const;
 
-export const DEFAULT_THEME: Theme = "halloween";
+export type Theme = typeof possibleThemes[number];
+
+export const DEFAULT_THEME: Theme = "sapphire";
 
 const useCustomEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -41,8 +39,8 @@ export const ThemeContextProvider = ({
   value = DEFAULT_THEME,
   children,
 }: {
-  value: Theme;
-  children: React.ReactNode;
+  value?: Theme;
+  children: JSX.Element;
 }) => {
   const [theme, setTheme] = useState(value);
 
