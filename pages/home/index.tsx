@@ -12,7 +12,7 @@ const Home: NextPage = () => {
           <Logo rem={2} />
         </span>
       </div>
-      <main className="flex flex-row overflow-y-hidden">
+      <main className="flex grow flex-row">
         <Sidebar />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-scroll scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
           <Note />
