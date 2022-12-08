@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import Logo from "../../components/Logo";
 import React from "react";
+import { Note } from "../../components/Note";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);
@@ -30,7 +31,11 @@ const Home: NextPage = () => {
             haloween
           </button>
         </div>
-        <div className="w-1/2 ml-[15%] bg-neutral h-full"></div>
+        <div className="w-1/2 ml-[15%] bg-neutral h-full">
+          <Note />
+          <Note />
+          <Note />
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export default function index() {
-  let sent: Boolean = true;
+  const sent = true;
 
   const PostSignUp = () => {
     return (

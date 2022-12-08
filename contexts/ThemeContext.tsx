@@ -34,7 +34,7 @@ export type ThemeContextProps = {
 
 export const ThemeContext = createContext<ThemeContextProps>({
   theme: DEFAULT_THEME,
-  setTheme: () => {},
+  setTheme: () => { },
 });
 
 export const ThemeContextProvider = ({
