@@ -25,7 +25,7 @@ module.exports = {
       "forest",
       "dracula",
       {
-        saphire: {
+        sapphire: {
           primary: "#A174EB", // Action - Main
           secondary: "#5FBC6E", // Important
           accent: "#000000",

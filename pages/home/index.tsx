@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import Logo from "../../components/Logo";
 import React from "react";
-import { Note } from "../../components/Note";
+import { Note } from "@components/note";
 
 const Home: NextPage = () => {
   const { setTheme } = useContext(ThemeContext);
@@ -32,9 +32,20 @@ const Home: NextPage = () => {
           </button>
         </div>
         <div className="w-1/2 ml-[15%] bg-neutral h-full">
-          <Note />
-          <Note />
-          <Note />
+          <Note
+            username="Richard"
+            userColor="green"
+            description="Lorem ipsum dolor sit amet consectetur 
+              adipisicing elit. Dolorem facere perspiciatis culpa
+              praesentium sequi quas aut illum, omnis cupiditate
+              illo, nobis quidem soluta excepturi minus incidunt 
+              consectetur. Neque, nesciunt dolorum?"
+            rating={5}
+            language={"C++"}
+            date={new Date("2022-03-25")}
+            minutesSpent={69}
+            tags={[{ description: "personal", name: "personal", tagColor: "personal", }, { description: "important", name: "important", tagColor: "important", }]}
+          />
         </div>
       </div>
     </div>

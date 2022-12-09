@@ -14,6 +14,23 @@ export type ButtonHandler = (
   event: React.MouseEvent<HTMLButtonElement>,
 ) => void;
 
+export type NoteProps = {
+  username: string | null;
+  userColor: string | null; // hex
+  description: string;
+  rating: number;
+  language: string;
+  date: Date;
+  minutesSpent: number;
+  tags: Array<Tag>;
+};
+
+export type Tag = {
+  description: string;
+  name: string;
+  tagColor: string;
+};
+
 // Firestore
 
 type FirestoreSnapshot =

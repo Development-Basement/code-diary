@@ -1,37 +1,35 @@
-import React from "react";
-import { HiUserCircle } from "react-icons/hi";
+import React, { FC } from "react";
+import { AccountCircle } from "@mui/icons-material";
+import { Stars } from "@components/stars";
+import { NoteProps } from "@lib/types";
+import { Label } from "@components/tag";
 
-export const Note = () => {
-
-  //data for component creation
-  const name = "Richard Materna";
-  const language = "C++";
-  const duration = 45;
-  const date = "6. 12. 2022";
-  const text = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem facere perspiciatis culpa praesentium sequi quas aut illum, omnis cupiditate illo, nobis quidem soluta excepturi minus incidunt consectetur. Neque, nesciunt dolorum?";
-  const tag = "important";
+export const Note: FC<NoteProps> = ({ username, userColor, description, rating, language, date, minutesSpent, tags, ...props }) => {
 
   return (
-    <div className="flex items-start">
-      <div className="w-[25%]">
-        <HiUserCircle className="w-[90%] h-[90%]" />
-      </div>
-      <div className="flex-col">
-        <div className="flex-row">
-          <p>{name}</p><p>{date}</p>
+    <div className="mb-5 snap-start">
+      <div className="flex">
+        <div className="w-[10%] h-fit min-h-[10vh]">
+          <AccountCircle className="w-[90%] h-[90%] text- background-base-100" />
         </div>
-        <p className="flex"><p className="text-secondary">{language}</p> &#160; for {duration} minutes</p>
-        <p>{text}</p>
-        <p>{tag}</p>
-
-        <div className="rating">
-          <input type="radio" name="rating-4" className="mask mask-star-2 bg-green-500" />
-          <input type="radio" name="rating-4" className="mask mask-star-2 bg-green-500" />
-          <input type="radio" name="rating-4" className="mask mask-star-2 bg-green-500" />
-          <input type="radio" name="rating-4" className="mask mask-star-2 bg-green-500" checked />
-          <input type="radio" name="rating-4" className="mask mask-star-2 bg-green-500" />
+        <div className="w-[90%]">
+          <div className="flex justify-between w-[95%]">
+            <span>{username}</span><span>{date.toDateString()}</span>
+          </div>
+          <p className="mb-2">{language} for {minutesSpent} minutes</p>
+          <p>{description}</p>
         </div>
       </div>
+      <div className="flex justify-between">
+        <span>
+          {tags.map((tag, i) => {
+            return (
+              <Label description={tags[i].description} name={tags[i].name} tagColor={tags[i].tagColor} key={i} />
+            );
+          })}
+        </span><span><Stars /></span>
+      </div>
+      <footer className="bg-primary h-2 mt-1"></footer>
     </div>
   );
 };
