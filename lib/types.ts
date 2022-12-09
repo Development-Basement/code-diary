@@ -25,6 +25,10 @@ export type NoteProps = {
   tags: Array<Tag>;
 };
 
+export type StarComponent = {
+  rating: number;
+};
+
 export type Tag = {
   description: string;
   name: string;

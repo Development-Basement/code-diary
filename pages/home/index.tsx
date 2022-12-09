@@ -46,6 +46,20 @@ const Home: NextPage = () => {
             minutesSpent={69}
             tags={[{ description: "personal", name: "personal", tagColor: "personal", }, { description: "important", name: "important", tagColor: "important", }]}
           />
+          <Note
+            username="Richard"
+            userColor="green"
+            description="Lorem ipsum dolor sit amet consectetur 
+              adipisicing elit. Dolorem facere perspiciatis culpa
+              praesentium sequi quas aut illum, omnis cupiditate
+              illo, nobis quidem soluta excepturi minus incidunt 
+              consectetur. Neque, nesciunt dolorum?"
+            rating={3}
+            language={"C++"}
+            date={new Date("2022-02-11")}
+            minutesSpent={69}
+            tags={[{ description: "important", name: "important", tagColor: "important", }]}
+          />
         </div>
       </div>
     </div>

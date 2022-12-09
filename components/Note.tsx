@@ -4,7 +4,7 @@ import { Stars } from "@components/stars";
 import { NoteProps } from "@lib/types";
 import { Label } from "@components/tag";
 
-export const Note: FC<NoteProps> = ({ username, userColor, description, rating, language, date, minutesSpent, tags, ...props }) => {
+export const Note: FC<NoteProps> = ({ username, userColor, description, rating, language, date, minutesSpent, tags, }) => {
 
   return (
     <div className="mb-5 snap-start">
@@ -27,7 +27,7 @@ export const Note: FC<NoteProps> = ({ username, userColor, description, rating, 
               <Label description={tags[i].description} name={tags[i].name} tagColor={tags[i].tagColor} key={i} />
             );
           })}
-        </span><span><Stars /></span>
+        </span><span><Stars rating={rating} /></span>
       </div>
       <footer className="bg-primary h-2 mt-1"></footer>
     </div>
