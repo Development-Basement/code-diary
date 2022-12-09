@@ -1,4 +1,5 @@
 import { auth, db } from "@lib/firebase";
+
 import {
   Color,
   converter,
@@ -6,7 +7,9 @@ import {
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
+
 import { createUserWithEmailAndPassword, User } from "firebase/auth";
+
 import {
   collection,
   doc,
@@ -18,7 +21,9 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 import React, { useContext, useEffect, useState } from "react";
+
 import { useAuthState } from "react-firebase-hooks/auth";
 
 type UserData = {
@@ -28,15 +33,17 @@ type UserData = {
   groups: Array<GroupId>;
 };
 
+type CrAcctWEmailArgs = {
+  username: string;
+  email: string;
+  password: string;
+  profileColor?: Color;
+};
+
 type AuthContextProps = {
   currentUser: User | null;
   userData: UserData;
-  createAccountWithEmail: (
-    username: string,
-    email: string,
-    password: string,
-    profileColor?: Color,
-  ) => Promise<void>;
+  createAccountWithEmail: (args: CrAcctWEmailArgs) => Promise<void>;
   changeUsername: (newUsername: string) => Promise<void>;
 };
 
@@ -47,6 +54,8 @@ const AuthContext = React.createContext<AuthContextProps>(
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+export const UsernameRegex = /^[a-zA-Z0-9-_]{3,15}$/;
 
 export function AuthProvider({ children }: { children: JSX.Element }) {
   const [user, , error] = useAuthState(auth);
@@ -83,19 +92,15 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
     return response;
   }
 
-  async function createAccountWithEmail(
-    username: string,
-    email: string,
-    password: string,
-    profileColor?: Color,
-  ) {
-    if (username.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+  async function createAccountWithEmail({
+    username,
+    email,
+    password,
+    profileColor,
+  }: CrAcctWEmailArgs) {
+    if (username.match(UsernameRegex) === null) {
       throw new Error("Username is not valid");
     }
-    console.log(email
-, username
-, password
-, profileColor)
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await Promise.all([
       setDoc(getPublicDocRef(res.user.uid), {
@@ -114,7 +119,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       throw new Error("Username already in database");
     }
     if (user) {
-      if (newUsername.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+      if (newUsername.match(UsernameRegex) === null) {
         throw new Error("Username is not valid");
       }
       await updateDoc(getPublicDocRef(user.uid), {
