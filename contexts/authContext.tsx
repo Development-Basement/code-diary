@@ -84,14 +84,18 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   async function createAccountWithEmail(
-    email: string,
     username: string,
+    email: string,
     password: string,
     profileColor?: Color,
   ) {
     if (username.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
       throw new Error("Username is not valid");
     }
+    console.log(email
+, username
+, password
+, profileColor)
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await Promise.all([
       setDoc(getPublicDocRef(res.user.uid), {

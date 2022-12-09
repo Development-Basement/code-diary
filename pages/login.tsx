@@ -1,9 +1,15 @@
+import { useContext } from "react";
+
 import Logo from "@components/logo";
 import Image from "next/image";
 import Link from "next/link";
 import google from "../public/google.png";
 
+import { useAuth } from "@contexts/authContext";
+
 export default function index() {
+  //const {}
+  
   return (
     <div className="grid h-screen place-items-center content-center self-center">
       <span className="flex">
