@@ -70,18 +70,18 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   function getPublicDocRef(uid: string) {
-    const ref = doc(db, "users", "accountInfo", "public", uid);
+    const ref = doc(db, "users", uid);
     return ref.withConverter(converter<UserPublicDoc>());
   }
 
   function getPrivateDocRef(uid: string) {
-    const ref = doc(db, "users", "accountInfo", "private", uid);
+    const ref = doc(db, "users", uid, "private", "groupInfo");
     return ref.withConverter(converter<UserPrivateDoc>());
   }
 
   async function isUsernameInUserDatabase(username: string) {
     const q = query(
-      collection(db, "users", "accountInfo", "public"),
+      collection(db, "users"),
       where("username", "==", username),
       limit(1),
     ).withConverter(converter<UserPublicDoc>());
@@ -112,6 +112,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
         invites: [],
       }),
     ]);
+    console.log("done");
   }
 
   async function changeUsername(newUsername: string) {

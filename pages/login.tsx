@@ -10,7 +10,7 @@ import Link from "next/link";
 export default function Login() {
   return (
     <>
-      <div className="flex h-screen flex-col place-items-center justify-center bg-base-100 pb-32 pt-16 text-base">
+      <main className="flex h-screen flex-col place-items-center justify-center bg-base-100 pb-32 pt-16 text-base">
         <span className="flex flex-col place-items-center gap-1">
           <Logo rem={4} />
           <desc className="mb-7 text-sm">
@@ -55,7 +55,7 @@ export default function Login() {
             Continue with Google
           </button>
         </div>
-      </div>
+      </main>
       <ThemePicker />
     </>
   );

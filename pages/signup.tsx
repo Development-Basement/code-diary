@@ -14,7 +14,7 @@ export default function Index() {
     <>
       <div className="flex h-screen items-center justify-center bg-neutral">
         <main
-          className="px-auto flex h-1/2 min-h-max w-1/2 min-w-max flex-col items-center justify-center rounded-lg
+          className="px-auto flex max-h-min min-h-[50%] w-1/2 min-w-max flex-col items-center justify-center rounded-lg
        bg-base-100 pb-32 pt-16 shadow-2xl drop-shadow-2xl"
         >
           <h1 className="mb-10 text-center text-4xl font-semibold">Sign Up</h1>
