@@ -1,4 +1,4 @@
-import ThemePicker from "@components/styleTest/themePicker";
+import ThemePicker from "@components/styleUtils/themePicker";
 import { useAuth, UsernameRegex } from "@contexts/authContext";
 
 import { FormSubmitHandler } from "@lib/types";

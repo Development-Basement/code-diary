@@ -6,7 +6,7 @@ const ThemePicker = () => {
   const { setTheme } = useContext(ThemeContext);
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 flex w-screen justify-center">
+    <div className="fixed bottom-0 left-0 right-0 flex w-screen justify-center">
       <span className="btn-group btn-group-horizontal">
         {possibleThemes.map((theme) => (
           <button

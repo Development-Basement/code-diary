@@ -1,5 +1,5 @@
 import Logo from "@components/logo";
-import ThemePicker from "@components/styleTest/themePicker";
+import ThemePicker from "@components/styleUtils/themePicker";
 
 import Image from "next/image";
 
@@ -17,8 +17,8 @@ export default function Login() {
             Keep track of your coding progress!
           </desc>
         </span>
-        <div className="flex w-1/4 flex-col place-items-center gap-2">
-          <form className="flex w-1/2 max-w-sm flex-col justify-center gap-2 text-center">
+        <div className="flex w-1/3 flex-col place-items-center gap-2">
+          <form className="flex w-1/2 flex-col justify-center gap-2 text-center">
             <input
               type="email"
               required
@@ -50,7 +50,7 @@ export default function Login() {
               src={google}
               alt="google"
               priority
-              className="absolute left-0 ml-2 h-7 w-7 object-scale-down"
+              className="absolute left-0 ml-2 mr-3 h-7 w-7 object-scale-down"
             />
             Continue with Google
           </button>
