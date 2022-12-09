@@ -5,7 +5,7 @@ import { FormSubmitHandler } from "@lib/types";
 
 import Link from "next/link";
 
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 
 export default function Index() {
   const sent = false;
@@ -34,6 +34,10 @@ const SignUpForm: FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordAgainRef = useRef<HTMLInputElement>(null);
 
+  const [emailError, setEmailError] = useState<string>("");
+  const [usernameError, setUsernameError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+
   const submitFormHandle: FormSubmitHandler = (e) => {
     e.preventDefault();
     const username = usernameRef.current?.value;
@@ -41,19 +45,22 @@ const SignUpForm: FC = () => {
     const password = passwordRef.current?.value;
 
     // make TS happy
-    if (
-      username === undefined ||
-      email === undefined ||
-      password === undefined
-    ) {
-      return; // probably should display an error to alert the user
+    if (username === undefined) {
+      setUsernameError("Please check provided username again...");
+      return;
+    } else if (email === undefined) {
+      setEmailError("Please check provided email again...");
+    } else if (password === undefined) {
+      setPasswordError("Password cannot be empty!");
+    } else if (password != passwordAgainRef.current?.value) {
+      setPasswordError("Passwords must match!");
+      return;
+    } else {
+      createAccountWithEmail({ username, password, email });
+      setEmailError("");
+      setUsernameError("");
+      setPasswordError("");
     }
-    if (password != passwordAgainRef.current?.value) {
-      return; // probably should display an error to alert the user
-    }
-
-    // TODO: @AlbertPatik do error handling (handle firebase errors, show stuff on error, ...)
-    createAccountWithEmail({ username, password, email });
   };
 
   return (
@@ -68,6 +75,7 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={emailRef}
       />
+      <p style={{ color: "red" }}>{emailError}</p>
       <br />
       <input
         type="text"
@@ -79,6 +87,7 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={usernameRef}
       />
+      <p style={{ color: "red" }}>{usernameError}</p>
       <br />
       <input
         type="password"
@@ -88,6 +97,7 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={passwordRef}
       />
+      <p style={{ color: "red" }}>{passwordError}</p>
       <br />
       <input
         type="password"
@@ -100,7 +110,7 @@ const SignUpForm: FC = () => {
       <br />
       <button
         type="submit"
-        className="btn btn-primary btn-md mt-3 text-base font-bold"
+        className="btn-primary btn-md btn mt-3 text-base font-bold"
       >
         Sign Up
       </button>
@@ -119,7 +129,7 @@ const PostSignUp: FC = () => {
         <p>Once you&apos;re finished click the button below.</p>
       </article>
       <Link className="w-full text-center no-underline" href={"./login"}>
-        <button className="btn-outline btn btn-primary mt-6">
+        <button className="btn-outline btn-primary btn mt-6">
           Back to Login
         </button>
       </Link>
