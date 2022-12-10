@@ -49,7 +49,23 @@ export const converter = <T>() => {
 
 export type UserId = string;
 export type GroupId = string;
+export type TagId = string;
 export type Color = string;
+
+export type Tag = {
+  description: string;
+  name: string;
+  tagColor: Color;
+};
+
+export type Record = {
+  date: Date;
+  description: string;
+  language: string;
+  minutesSpent: number;
+  rating: number;
+  tags: Array<string>;
+};
 
 export type UserPublicDoc = {
   profileColor: Color;

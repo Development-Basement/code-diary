@@ -11,7 +11,7 @@ type Record = {
 };
 
 type Tag = {
-  description: string; // tag description
+  description: string; // tag description, max 50 words
   name: string; // name of the tag, probably /[a-z-]/, 3 - 13 chars or so
   tagColor: string; // HTML/HEX color code
 };

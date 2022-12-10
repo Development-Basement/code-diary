@@ -1,66 +1,69 @@
+import Stars from "@components/stars";
+import TagLabel from "@components/tag";
+
+import { Color, Tag } from "@lib/types";
+
 import { AccountCircle } from "@mui/icons-material";
 
-const Note = () => {
-  // data for component creation
-  const name = "Richard Materna";
-  const language = "C++";
-  const duration = 45;
-  const date = "6. 12. 2022";
-  const text =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem facere perspiciatis culpa praesentium sequi quas aut illum, omnis cupiditate illo, nobis quidem soluta excepturi minus incidunt consectetur. Neque, nesciunt dolorum?";
-  const tag = "important";
+import { FC } from "react";
+
+export type NoteProps = {
+  username: string | null;
+  userColor: Color | null;
+  date: Date;
+  description: string;
+  language: string;
+  minutesSpent: number;
+  rating: number;
+  tags: Array<Tag>;
+};
+
+const Note: FC<NoteProps> = ({
+  username,
+  userColor,
+  description,
+  rating,
+  language,
+  date,
+  minutesSpent,
+  tags,
+}) => {
+  userColor = userColor ?? "gray";
 
   return (
-    <div className="flex snap-start items-start bg-base-100">
-      <div className="w-[25%]">
-        <AccountCircle className="h-[90%] w-[90%]" />
-      </div>
-      <div className="flex-col">
-        <div className="flex-row">
-          <p>{name}</p>
-          <p>{date}</p>
+    <div className="snap-start bg-base-100 pt-3 text-base-content">
+      <div className="p-2">
+        <div className="flex gap-2">
+          <div className="h-fit w-14 flex-none">
+            <AccountCircle
+              className="h-full w-full"
+              style={{ color: userColor }}
+            />
+          </div>
+          <div className="flex grow flex-col">
+            <div className="flex justify-between gap-4 font-bold">
+              <span>{username}</span>
+              <span>{date.toDateString()}</span>
+            </div>
+            <p className="mb-2">
+              <span className="font-bold text-success">{language}</span> for{" "}
+              <span className="font-bold">{minutesSpent} minutes</span>
+            </p>
+            <article>{description}</article>
+          </div>
         </div>
-        <p className="flex">
-          <p className="text-secondary">{language}</p> &nbsp; for {duration}{" "}
-          minutes
-        </p>
-        <p>{text}</p>
-        <p>{tag}</p>
-
-        <form className="rating">
-          <input
-            type="radio"
-            name="rating-4"
-            className="mask mask-star-2 bg-success"
-            disabled
-          />
-          <input
-            type="radio"
-            name="rating-4"
-            className="mask mask-star-2 bg-success"
-            disabled
-          />
-          <input
-            type="radio"
-            name="rating-4"
-            className="mask mask-star-2 bg-success"
-            disabled
-          />
-          <input
-            type="radio"
-            name="rating-4"
-            className="mask mask-star-2 bg-success"
-            disabled
-            checked
-          />
-          <input
-            type="radio"
-            name="rating-4"
-            className="mask mask-star-2 bg-success"
-            disabled
-          />
-        </form>
+        <div className="flex justify-between">
+          <span className="flex items-center gap-2">
+            {tags.map((tag, i) => {
+              return <TagLabel {...tag} key={i} />;
+            })}
+          </span>
+          <span>
+            <Stars rating={rating} />
+          </span>
+        </div>
       </div>
+      <footer style={{ background: userColor }} className="h-1" />
     </div>
   );
 };
