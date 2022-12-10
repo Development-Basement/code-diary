@@ -18,24 +18,20 @@ type Tag = {
 
 export type DB = {
   users: {
-    accountInfo: {
+    $uuid: {
+      profileColor: string; // HTML/HEX color code
+      username: string;
       _private: {
-        $uuid: {
+        groupInfo: {
           groups: Array<string>; // groupName
-          invites: Map<string, string>; // groupName, from (user)
-        };
-      };
-      _public: {
-        $uuid: {
-          profileColor: string; // HTML/HEX color code
-          username: string;
+          invites: Array<string>; // groupName
         };
       };
     };
   };
   groups: {
     $groupName: {
-      admins: Array<string>; // UUID
+      admin: string; // UUID
       allMembers: Array<string>; // UUID
       _$uuid: {
         $recordId: Record;

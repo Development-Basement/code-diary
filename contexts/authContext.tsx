@@ -1,14 +1,15 @@
 import { auth, db } from "@lib/firebase";
+
 import {
   Color,
   converter,
-  FirestoreMap,
   GroupId,
-  UserId,
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
+
 import { createUserWithEmailAndPassword, User } from "firebase/auth";
+
 import {
   collection,
   doc,
@@ -20,18 +21,29 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 import React, { useContext, useEffect, useState } from "react";
+
 import { useAuthState } from "react-firebase-hooks/auth";
 
-export type AuthContextProps = {
+type UserData = {
+  username: string | null;
+  profileColor: Color | null;
+  invites: Array<GroupId>;
+  groups: Array<GroupId>;
+};
+
+type CrAcctWEmailArgs = {
+  username: string;
+  email: string;
+  password: string;
+  profileColor?: Color;
+};
+
+type AuthContextProps = {
   currentUser: User | null;
-  userData: (UserPublicDoc & UserPrivateDoc) | null;
-  createAccountWithEmail: (
-    username: string,
-    email: string,
-    password: string,
-    profileColor?: Color,
-  ) => Promise<void>;
+  userData: UserData;
+  createAccountWithEmail: (args: CrAcctWEmailArgs) => Promise<void>;
   changeUsername: (newUsername: string) => Promise<void>;
 };
 
@@ -43,31 +55,33 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+export const UsernameRegex = /^[a-zA-Z0-9-_]{3,15}$/;
+
 export function AuthProvider({ children }: { children: JSX.Element }) {
   const [user, , error] = useAuthState(auth);
 
   const [username, setUsername] = useState<string | null>(null);
   const [profileColor, setProfileColor] = useState<Color | null>(null);
   const [groups, setGroups] = useState<Array<GroupId>>([]);
-  const [invites, setInvites] = useState<FirestoreMap<UserId>>({});
+  const [invites, setInvites] = useState<Array<GroupId>>([]);
 
   function generateRandomColor(): Color {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
   function getPublicDocRef(uid: string) {
-    const ref = doc(db, "users", "accountInfo", "public", uid);
+    const ref = doc(db, "users", uid);
     return ref.withConverter(converter<UserPublicDoc>());
   }
 
   function getPrivateDocRef(uid: string) {
-    const ref = doc(db, "users", "accountInfo", "private", uid);
+    const ref = doc(db, "users", uid, "private", "groupInfo");
     return ref.withConverter(converter<UserPrivateDoc>());
   }
 
   async function isUsernameInUserDatabase(username: string) {
     const q = query(
-      collection(db, "users", "accountInfo", "public"),
+      collection(db, "users"),
       where("username", "==", username),
       limit(1),
     ).withConverter(converter<UserPublicDoc>());
@@ -78,26 +92,31 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
     return response;
   }
 
-  async function createAccountWithEmail(
-    email: string,
-    username: string,
-    password: string,
-    profileColor?: Color,
-  ) {
-    if (username.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+  async function createAccountWithEmail({
+    username,
+    email,
+    password,
+    profileColor,
+  }: CrAcctWEmailArgs) {
+    if (username.match(UsernameRegex) === null) {
       throw new Error("Username is not valid");
     }
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    await Promise.all([
-      setDoc(getPublicDocRef(res.user.uid), {
-        username,
-        profileColor: profileColor || generateRandomColor(),
-      }),
-      setDoc(getPrivateDocRef(res.user.uid), {
-        groups: [],
-        invites: {},
-      }),
-    ]);
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      await Promise.all([
+        setDoc(getPublicDocRef(res.user.uid), {
+          username,
+          profileColor: profileColor || generateRandomColor(),
+        }),
+        setDoc(getPrivateDocRef(res.user.uid), {
+          groups: [],
+          invites: [],
+        }),
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("done");
   }
 
   async function changeUsername(newUsername: string) {
@@ -105,7 +124,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       throw new Error("Username already in database");
     }
     if (user) {
-      if (newUsername.match(/^[a-zA-Z0-9-_]{3,15}$/) === null) {
+      if (newUsername.match(UsernameRegex) === null) {
         throw new Error("Username is not valid");
       }
       await updateDoc(getPublicDocRef(user.uid), {
@@ -153,21 +172,18 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
     }
     setUsername(null);
     setProfileColor(null);
-    setInvites({});
+    setInvites([]);
     setGroups([]);
   }, [user]);
 
   const value: AuthContextProps = {
     currentUser: user === undefined ? null : user,
-    userData:
-      username === null || profileColor === null
-        ? null
-        : {
-            username,
-            profileColor,
-            groups,
-            invites,
-          },
+    userData: {
+      username,
+      profileColor,
+      groups,
+      invites,
+    },
     createAccountWithEmail,
     changeUsername,
   };

@@ -10,9 +10,9 @@ export const possibleThemes = [
   "business",
   "night",
   "coffee",
-  // "forest",
-  // "dracula",
-  // "light",
+  "forest",
+  "dracula",
+  "light",
 ] as const;
 
 export type Theme = typeof possibleThemes[number];

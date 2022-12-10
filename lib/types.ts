@@ -3,16 +3,24 @@ import {
   FirestoreDataConverter as AFirestoreDataConverter,
   QueryDocumentSnapshot as AQueryDocumentSnapshot,
 } from "firebase-admin/firestore";
+
 import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
+
 import React from "react";
+
+type PossiblyAsync<T> = T | Promise<T>;
 
 export type ButtonHandler = (
   event: React.MouseEvent<HTMLButtonElement>,
-) => void;
+) => PossiblyAsync<void>;
+
+export type FormSubmitHandler = (
+  event: React.FormEvent<HTMLFormElement>,
+) => PossiblyAsync<void>;
 
 // Firestore
 
@@ -43,11 +51,6 @@ export type UserId = string;
 export type GroupId = string;
 export type Color = string;
 
-export type AllUsersDoc = {
-  /** UserId -> string */
-  users: FirestoreMap<UserId>;
-};
-
 export type UserPublicDoc = {
   profileColor: Color;
   username: string;
@@ -55,6 +58,5 @@ export type UserPublicDoc = {
 
 export type UserPrivateDoc = {
   groups: Array<GroupId>;
-  /** GroupId -> UserId */
-  invites: FirestoreMap<UserId>;
+  invites: Array<GroupId>;
 };
