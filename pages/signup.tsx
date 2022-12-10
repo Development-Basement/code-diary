@@ -1,7 +1,11 @@
+import Spinner from "@components/spinner";
 import ThemePicker from "@components/styleUtils/themePicker";
 import { useAuth, UsernameRegex } from "@contexts/authContext";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { FormSubmitHandler } from "@lib/types";
+
+import { AuthError } from "firebase/auth";
 
 import Link from "next/link";
 
@@ -34,38 +38,38 @@ const SignUpForm: FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordAgainRef = useRef<HTMLInputElement>(null);
 
-  const [emailError, setEmailError] = useState<string>("");
-  const [usernameError, setUsernameError] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const submitFormHandle: FormSubmitHandler = (e) => {
+  const submitFormHandle: FormSubmitHandler = async (e) => {
     e.preventDefault();
     const username = usernameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
     // make TS happy
-    if (username === undefined) {
-      setUsernameError("Please check provided username again...");
-      return;
-    } else if (email === undefined) {
-      setEmailError("Please check provided email again...");
-    } else if (password === undefined) {
-      setPasswordError("Password cannot be empty!");
-    } else if (password != passwordAgainRef.current?.value) {
-      setPasswordError("Passwords must match!");
-      return;
-    } else {
-      createAccountWithEmail({ username, password, email });
-      setEmailError("");
-      setUsernameError("");
-      setPasswordError("");
+    if (!username || !email || !password) {
+      return; // just to make typescript happy...
     }
+    if (password != passwordAgainRef.current?.value) {
+      setError("Passwords must match!");
+      return;
+    }
+    setLoading(true);
+    try {
+      await createAccountWithEmail({ username, password, email });
+      setError("");
+    } catch (err) {
+      const error = err as AuthError;
+      console.log(error.message);
+      setError(error.message);
+    }
+    setLoading(false);
   };
 
   return (
     <form
-      className="flex w-1/2 max-w-sm flex-col justify-center gap-1 text-center"
+      className="flex w-1/2 max-w-sm flex-col justify-center gap-2 text-center"
       onSubmit={submitFormHandle}
     >
       <input
@@ -75,8 +79,6 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={emailRef}
       />
-      <p style={{ color: "red" }}>{emailError}</p>
-      <br />
       <input
         type="text"
         required
@@ -87,8 +89,6 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={usernameRef}
       />
-      <p style={{ color: "red" }}>{usernameError}</p>
-      <br />
       <input
         type="password"
         required
@@ -97,8 +97,6 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={passwordRef}
       />
-      <p style={{ color: "red" }}>{passwordError}</p>
-      <br />
       <input
         type="password"
         required
@@ -107,13 +105,38 @@ const SignUpForm: FC = () => {
         className="input-bordered input-primary input input-md"
         ref={passwordAgainRef}
       />
-      <br />
       <button
         type="submit"
-        className="btn-primary btn-md btn mt-3 text-base font-bold"
+        className="btn btn-primary btn-md mt-3 text-base font-bold"
       >
-        Sign Up
+        {loading ? (
+          <span className="flex place-items-center">
+            <span className="mr-2 h-4 w-4">
+              <Spinner />
+            </span>
+            Loading...
+          </span>
+        ) : (
+          "Sign Up"
+        )}
       </button>
+      {error ? (
+        <div className="alert alert-error mt-3 inline">
+          <button
+            className="float-right"
+            onClick={() => {
+              setError("");
+            }}
+          >
+            <CloseRoundedIcon />
+          </button>
+          <p className="block overflow-hidden text-ellipsis whitespace-normal break-words">
+            {error}
+          </p>
+        </div>
+      ) : (
+        <></>
+      )}
     </form>
   );
 };
@@ -129,7 +152,7 @@ const PostSignUp: FC = () => {
         <p>Once you&apos;re finished click the button below.</p>
       </article>
       <Link className="w-full text-center no-underline" href={"./login"}>
-        <button className="btn-outline btn-primary btn mt-6">
+        <button className="btn-outline btn btn-primary mt-6">
           Back to Login
         </button>
       </Link>

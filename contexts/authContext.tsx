@@ -101,22 +101,17 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
     if (username.match(UsernameRegex) === null) {
       throw new Error("Username is not valid");
     }
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      await Promise.all([
-        setDoc(getPublicDocRef(res.user.uid), {
-          username,
-          profileColor: profileColor || generateRandomColor(),
-        }),
-        setDoc(getPrivateDocRef(res.user.uid), {
-          groups: [],
-          invites: [],
-        }),
-      ]);
-    } catch (error) {
-      console.log(error);
-    }
-    console.log("done");
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    await Promise.all([
+      setDoc(getPublicDocRef(res.user.uid), {
+        username,
+        profileColor: profileColor || generateRandomColor(),
+      }),
+      setDoc(getPrivateDocRef(res.user.uid), {
+        groups: [],
+        invites: [],
+      }),
+    ]);
   }
 
   async function changeUsername(newUsername: string) {
