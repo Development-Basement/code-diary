@@ -1,20 +1,20 @@
-import { StarComponent } from "@lib/types";
-
 import { FC } from "react";
 
-export const Stars: FC<StarComponent> = ({ rating }) => {
-  const numElems = 5;
-  const elems = [];
-  for (let i = 1; i < numElems + 1; ++i) {
-    elems.push(i);
-  }
+export type StarProps = {
+  rating: number;
+};
 
+const Stars: FC<StarProps> = ({ rating }) => {
+  // clamp rating between 1 and 5 (inclusive) in whole numbers
+  rating = Math.round(rating);
+  rating = Math.max(1, rating);
+  rating = Math.min(5, rating);
   return (
     <div className="rating">
-      {elems.map((i) => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <input
           type="radio"
-          className="mask mask-star-2 bg-secondary"
+          className="mask mask-star-2 cursor-default bg-success"
           disabled
           checked={rating === i}
           key={i}
@@ -23,3 +23,5 @@ export const Stars: FC<StarComponent> = ({ rating }) => {
     </div>
   );
 };
+
+export default Stars;

@@ -1,11 +1,22 @@
-import { Stars } from "@components/stars";
-import { Label } from "@components/tag";
+import Stars from "@components/stars";
+import TagLabel from "@components/tag";
 
-import { NoteProps } from "@lib/types";
+import { Color, Tag } from "@lib/types";
 
 import { AccountCircle } from "@mui/icons-material";
 
 import { FC } from "react";
+
+export type NoteProps = {
+  username: string | null;
+  userColor: Color | null;
+  date: Date;
+  description: string;
+  language: string;
+  minutesSpent: number;
+  rating: number;
+  tags: Array<Tag>;
+};
 
 const Note: FC<NoteProps> = ({
   username,
@@ -17,48 +28,42 @@ const Note: FC<NoteProps> = ({
   minutesSpent,
   tags,
 }) => {
+  userColor = userColor ?? "gray";
+
   return (
     <div className="snap-start bg-base-100 pt-3 text-base-content">
-      <div className="flex gap-2 px-2">
-        <div className="h-fit w-32">
-          <AccountCircle
-            className="h-full w-full"
-            style={{ color: userColor || "gray" }}
-          />
-        </div>
-        <div className="stretch">
-          <div className="flex justify-between font-bold">
-            <span>{username}</span>
-            <span>{date.toDateString()}</span>
+      <div className="p-2">
+        <div className="flex gap-2">
+          <div className="h-fit w-14 flex-none">
+            <AccountCircle
+              className="h-full w-full"
+              style={{ color: userColor }}
+            />
           </div>
-          <p className="mb-2">
-            <span className="font-bold text-success">{language}</span> for{" "}
-            <span className="font-bold">{minutesSpent} minutes</span>
-          </p>
-          <p>{description}</p>
+          <div className="flex grow flex-col">
+            <div className="flex justify-between gap-4 font-bold">
+              <span>{username}</span>
+              <span>{date.toDateString()}</span>
+            </div>
+            <p className="mb-2">
+              <span className="font-bold text-success">{language}</span> for{" "}
+              <span className="font-bold">{minutesSpent} minutes</span>
+            </p>
+            <article>{description}</article>
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <span className="flex items-center gap-2">
+            {tags.map((tag, i) => {
+              return <TagLabel {...tag} key={i} />;
+            })}
+          </span>
+          <span>
+            <Stars rating={rating} />
+          </span>
         </div>
       </div>
-      <div className="flex justify-between px-2">
-        <span className="flex items-center gap-2">
-          {tags.map((tag, i) => {
-            return (
-              <Label
-                description={tag.description}
-                name={tag.name}
-                tagColor={tag.tagColor}
-                key={i}
-              />
-            );
-          })}
-        </span>
-        <span>
-          <Stars rating={rating} />
-        </span>
-      </div>
-      <footer
-        style={{ background: userColor || "gray" }}
-        className="mt-1 h-1"
-      />
+      <footer style={{ background: userColor }} className="h-1" />
     </div>
   );
 };

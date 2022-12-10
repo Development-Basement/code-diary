@@ -22,27 +22,6 @@ export type FormSubmitHandler = (
   event: React.FormEvent<HTMLFormElement>,
 ) => PossiblyAsync<void>;
 
-export type NoteProps = {
-  username: string | null;
-  userColor: string | null; // hex
-  description: string;
-  rating: number;
-  language: string;
-  date: Date;
-  minutesSpent: number;
-  tags: Array<Tag>;
-};
-
-export type StarComponent = {
-  rating: number;
-};
-
-export type Tag = {
-  description: string;
-  name: string;
-  tagColor: string;
-};
-
 // Firestore
 
 type FirestoreSnapshot =
@@ -70,7 +49,23 @@ export const converter = <T>() => {
 
 export type UserId = string;
 export type GroupId = string;
+export type TagId = string;
 export type Color = string;
+
+export type Tag = {
+  description: string;
+  name: string;
+  tagColor: Color;
+};
+
+export type Record = {
+  date: Date;
+  description: string;
+  language: string;
+  minutesSpent: number;
+  rating: number;
+  tags: Array<string>;
+};
 
 export type UserPublicDoc = {
   profileColor: Color;

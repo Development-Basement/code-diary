@@ -24,7 +24,7 @@ const Sidebar: FC = () => {
               onClick={() => {
                 setTheme(theme);
               }}
-              className="btn btn-secondary btn-sm"
+              className="btn-secondary btn-sm btn"
             >
               {theme}
             </button>

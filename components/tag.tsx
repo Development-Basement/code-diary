@@ -1,16 +1,19 @@
-import { FC } from "react";
 import { Tag } from "@lib/types";
+import { FC } from "react";
 
-export const Label: FC<Tag> = ({ name, tagColor }) => {
-  const choices = {
-    important: "primary",
-    personal: "rose-600",
-  };
-  const color = choices[tagColor as keyof typeof choices];
-
+const TagLabel: FC<Tag> = ({ name, tagColor, description }) => {
   return (
-    <span className={`text-${color}`}>
-      {name}
-    </span>
+    <div className="tooltip tooltip-bottom" data-tip={description}>
+      <span
+        className="badge"
+        style={{
+          background: tagColor,
+        }}
+      >
+        {name}
+      </span>
+    </div>
   );
 };
+
+export default TagLabel;
