@@ -1,18 +1,26 @@
 import {
+  DocumentData as ADocumentData,
+  FirestoreDataConverter as AFirestoreDataConverter,
+  QueryDocumentSnapshot as AQueryDocumentSnapshot,
+} from "firebase-admin/firestore";
+
+import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
-import {
-  QueryDocumentSnapshot as AQueryDocumentSnapshot,
-  DocumentData as ADocumentData,
-  FirestoreDataConverter as AFirestoreDataConverter,
-} from "firebase-admin/firestore";
+
 import React from "react";
+
+type PossiblyAsync<T> = T | Promise<T>;
 
 export type ButtonHandler = (
   event: React.MouseEvent<HTMLButtonElement>,
-) => void;
+) => PossiblyAsync<void>;
+
+export type FormSubmitHandler = (
+  event: React.FormEvent<HTMLFormElement>,
+) => PossiblyAsync<void>;
 
 export type NoteProps = {
   username: string | null;
@@ -60,19 +68,16 @@ export const converter = <T>() => {
 
 // Database
 
-type UserId = string;
-type GroupId = string;
-type Color = string;
+export type UserId = string;
+export type GroupId = string;
+export type Color = string;
 
-export type AllUsersDoc = {
-  /** UserId -> string */
-  users: FirestoreMap<UserId>;
-};
-
-export type UserDoc = {
-  groups: Array<GroupId>;
-  /** GroupId -> UserId */
-  invites: FirestoreMap<UserId>;
+export type UserPublicDoc = {
   profileColor: Color;
   username: string;
+};
+
+export type UserPrivateDoc = {
+  groups: Array<GroupId>;
+  invites: Array<GroupId>;
 };

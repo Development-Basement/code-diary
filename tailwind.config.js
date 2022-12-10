@@ -6,24 +6,13 @@ module.exports = {
     "./contexts/**/*.{js,ts,jsx,tsx}",
     "./lib/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
-    colors: {
-      // FIXME: remove these colors
-      "lighter-dark": "#242424",
-      color1: "#A174EB",
-      gray: "#B0B0B0",
-      ...require("tailwindcss/colors"),
-    },
-  },
   plugins: [
+    require("daisyui"),
     require("@tailwindcss/line-clamp"),
     require("@tailwindcss/typography"),
-    require("daisyui"),
   ],
   daisyui: {
     themes: [
-      "forest",
-      "dracula",
       {
         sapphire: {
           primary: "#A174EB", // Action - Main
@@ -37,7 +26,6 @@ module.exports = {
           error: "#000000",
         },
       },
-      "light",
       "halloween",
       "dark",
       "synthwave",
@@ -46,6 +34,9 @@ module.exports = {
       "business",
       "night",
       "coffee",
+      "forest",
+      "dracula",
+      "light",
     ],
   },
 };

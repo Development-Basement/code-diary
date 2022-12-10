@@ -1,6 +1,5 @@
-import { DEFAULT_THEME } from "@contexts/ThemeContext";
-import { Html, Head, Main, NextScript } from "next/document";
-import React from "react";
+import { DEFAULT_THEME } from "@contexts/themeContext";
+import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (

@@ -1,11 +1,14 @@
+import { useAuth } from "@contexts/authContext";
 import { auth, db } from "@lib/firebase";
-import { converter, UserDoc } from "@lib/types";
+import { converter, UserPublicDoc } from "@lib/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 export default function TestUserDoc() {
-  const [docData, setDocData] = useState<UserDoc>();
+  const [docData, setDocData] = useState<UserPublicDoc>();
+
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     async function getDocument() {
@@ -13,45 +16,53 @@ export default function TestUserDoc() {
         auth,
         "mistradam@post.cz",
         "qwerty",
+      ); // NDVSXudpVlQHdPoPnW7mVtJB1ky1
+      const docRef = doc(
+        db,
+        "users",
+        "accountInfo",
+        "public",
+        credential.user.uid,
+      ).withConverter(converter<UserPublicDoc>());
+      const unsub = onSnapshot(
+        docRef,
+        (snap) => {
+          setDocData(snap.data());
+        },
+        (e) => {
+          console.error(e.message);
+          return undefined;
+        },
       );
-      const docRef = doc(db, "users", credential.user.uid).withConverter(
-        converter<UserDoc>(),
-      );
-      const document = await getDoc(docRef).catch((e) => {
-        console.error(e.message);
-        return undefined;
-      });
-      setDocData(document?.data());
       // legal updates
       setTimeout(async () => {
         await updateDoc(docRef, { profileColor: "#606060" });
-      }, 5);
+        console.log("Updated doc v1");
+      }, 5000);
       setTimeout(async () => {
         await updateDoc(docRef, { profileColor: "#ccff00" });
-      }, 10);
+        console.log("Updated doc v2");
+      }, 10000);
+      return unsub;
     }
     getDocument();
   }, []);
 
   return (
     <div>
-      {docData ? (
-        <>
-          groups: {docData.groups}
-          <br />
-          invites:
-          {JSON.stringify(docData.invites)
-            .replaceAll(/"/g, " ")
-            .replaceAll(/ :/g, ":")
-            .replaceAll(/ ,/g, ",")}
-          <br />
-          profileColor: {docData.profileColor}
-          <br />
-          username: {docData.username}
-        </>
-      ) : (
-        "Fetching doc data"
-      )}
+      <>
+        currentUser: {currentUser?.uid}
+        <br />
+        {docData ? (
+          <>
+            profileColor: {docData.profileColor}
+            <br />
+            username: {docData.username}
+          </>
+        ) : (
+          "Fetching doc data"
+        )}
+      </>
     </div>
   );
 }
