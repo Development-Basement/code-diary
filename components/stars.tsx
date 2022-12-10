@@ -1,29 +1,25 @@
-import { FC } from "react";
 import { StarComponent } from "@lib/types";
 
+import { FC } from "react";
+
 export const Stars: FC<StarComponent> = ({ rating }) => {
-
-  const grades = {
-    one: false,
-    two: false,
-    three: false,
-    four: false,
-    five: false,
-  };
-
-  rating === 1 ? grades.one = true :
-    rating === 2 ? grades.two = true :
-      rating === 3 ? grades.three = true :
-        rating === 4 ? grades.four = true :
-          grades.five = true;
+  const numElems = 5;
+  const elems = [];
+  for (let i = 1; i < numElems + 1; ++i) {
+    elems.push(i);
+  }
 
   return (
     <div className="rating">
-      <input type="radio" className="mask mask-star-2 bg-secondary" disabled checked={grades.one} />
-      <input type="radio" className="mask mask-star-2 bg-secondary" disabled checked={grades.two} />
-      <input type="radio" className="mask mask-star-2 bg-secondary" disabled checked={grades.three} />
-      <input type="radio" className="mask mask-star-2 bg-secondary" disabled checked={grades.four} />
-      <input type="radio" className="mask mask-star-2 bg-secondary" disabled checked={grades.five} />
+      {elems.map((i) => (
+        <input
+          type="radio"
+          className="mask mask-star-2 bg-secondary"
+          disabled
+          checked={rating === i}
+          key={i}
+        />
+      ))}
     </div>
   );
 };
