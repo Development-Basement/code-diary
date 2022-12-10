@@ -1,5 +1,4 @@
 import Spinner from "@components/spinner";
-import ThemePicker from "@components/styleUtils/themePicker";
 import { useAuth, UsernameRegex } from "@contexts/authContext";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
@@ -15,18 +14,15 @@ export default function Index() {
   const sent = false;
 
   return (
-    <>
-      <div className="flex h-screen items-center justify-center bg-neutral">
-        <main
-          className="px-auto flex max-h-min min-h-[50%] w-1/2 min-w-max flex-col items-center justify-center rounded-lg
+    <div className="flex h-screen items-center justify-center bg-neutral">
+      <main
+        className="px-auto flex max-h-min min-h-[50%] w-1/2 min-w-max flex-col items-center justify-center rounded-lg
        bg-base-100 pb-32 pt-16 shadow-2xl drop-shadow-2xl"
-        >
-          <h1 className="mb-10 text-center text-4xl font-semibold">Sign Up</h1>
-          {!sent ? <SignUpForm /> : <PostSignUp />}
-        </main>
-      </div>
-      <ThemePicker />
-    </>
+      >
+        <h1 className="mb-10 text-center text-4xl font-semibold">Sign Up</h1>
+        {!sent ? <SignUpForm /> : <PostSignUp />}
+      </main>
+    </div>
   );
 }
 

@@ -1,3 +1,4 @@
+import ThemePicker from "@components/styleUtils/themePicker";
 import { AuthProvider } from "@contexts/authContext";
 import { ThemeContextProvider } from "@contexts/themeContext";
 import "@styles/globals.css";
@@ -8,7 +9,10 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <AuthProvider>
         <ThemeContextProvider>
-          <Component {...pageProps} />
+          <>
+            <Component {...pageProps} />
+            <ThemePicker />
+          </>
         </ThemeContextProvider>
       </AuthProvider>
     </>

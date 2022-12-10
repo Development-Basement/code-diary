@@ -129,46 +129,47 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   useEffect(() => {
-    if (user) {
-      const pubUnsub = onSnapshot(
-        getPublicDocRef(user.uid),
-        (pubDoc) => {
-          const data = pubDoc.data();
-          if (data === undefined) {
-            return;
-          }
-          setUsername(data.username);
-          setProfileColor(data.profileColor);
-        },
-        (err) => {
-          console.error(err.message, err.cause);
-          console.debug(err);
-        },
-      );
-      const privUnsub = onSnapshot(
-        getPrivateDocRef(user.uid),
-        (privDoc) => {
-          const data = privDoc.data();
-          if (data === undefined) {
-            return;
-          }
-          setGroups(data.groups);
-          setInvites(data.invites);
-        },
-        (err) => {
-          console.error(err.message, err.cause);
-          console.debug(err);
-        },
-      );
-      return () => {
-        privUnsub();
-        pubUnsub();
-      };
+    if (!user) {
+      setUsername(null);
+      setProfileColor(null);
+      setInvites([]);
+      setGroups([]);
+      return;
     }
-    setUsername(null);
-    setProfileColor(null);
-    setInvites([]);
-    setGroups([]);
+    const pubUnsub = onSnapshot(
+      getPublicDocRef(user.uid),
+      (pubDoc) => {
+        const data = pubDoc.data();
+        if (data === undefined) {
+          return;
+        }
+        setUsername(data.username);
+        setProfileColor(data.profileColor);
+      },
+      (err) => {
+        console.error(err.message, err.cause);
+        console.debug(err);
+      },
+    );
+    const privUnsub = onSnapshot(
+      getPrivateDocRef(user.uid),
+      (privDoc) => {
+        const data = privDoc.data();
+        if (data === undefined) {
+          return;
+        }
+        setGroups(data.groups);
+        setInvites(data.invites);
+      },
+      (err) => {
+        console.error(err.message, err.cause);
+        console.debug(err);
+      },
+    );
+    return () => {
+      privUnsub();
+      pubUnsub();
+    };
   }, [user]);
 
   const value: AuthContextProps = {

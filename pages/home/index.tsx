@@ -19,9 +19,18 @@ const Home: NextPage = () => {
       tagColor: "#EEEEEE",
     },
     lkjlkje8123kj128123F: {
-      description: "important",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. " +
+        "Dolorem facere perspiciatis culpa praesentium sequi quas aut illum, " +
+        "omnis cupiditate illo, nobis quidem soluta excepturi minus incidunt consectetur. " +
+        "Neque, nesciunt dolorum?",
       name: "important",
       tagColor: "#FF3333",
+    },
+    abcdefg: {
+      description: "a very not irrelevant tag",
+      name: "nirrelevant",
+      tagColor: "#333333",
     },
   };
 
@@ -44,7 +53,12 @@ const Home: NextPage = () => {
       language: "Python",
       date: new Date("2022-03-25"),
       minutesSpent: 5,
-      tags: ["icIelKOni9WSwgsm8fRQ", "lkjlkje8123kj128123F", "lkjlkjlksdf"],
+      tags: [
+        "icIelKOni9WSwgsm8fRQ",
+        "lkjlkje8123kj128123F",
+        "lkjlkjlksdf",
+        "abcdefg",
+      ],
     },
   ];
 
