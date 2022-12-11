@@ -3,7 +3,7 @@ import Note from "@components/note";
 
 import { Add } from "@mui/icons-material";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import Sidebar from "@components/sidebar";
 
@@ -19,11 +19,20 @@ const Home: NextPage = () => {
 
   const { userData } = useAuth();
 
-  const [rating, setRating] = useState<unknown>(1);
+  const [teams, setTeams] = useState(["team 1", "team 2", "team 3"]);
+  const [categories, setCategories] = useState([
+    "category 1",
+    "category 2",
+    "category 3",
+  ]);
 
-  const ratingChagedHandle = (rating: unknown) => {
-    console.log(rating);
-  };
+  const languageRef = useRef<HTMLInputElement>(null);
+  const durationRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const dateAndTimeRef = useRef<HTMLInputElement>(null);
+  const teamRef = useRef<HTMLInputElement>(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [rating, setRating] = useState<unknown>(1);
 
   const tags: { [k: TagId]: Tag } = {
     icIelKOni9WSwgsm8fRQ: {
@@ -85,29 +94,36 @@ const Home: NextPage = () => {
           <form
             action=""
             className="my-4 flex w-full flex-col justify-center gap-2 text-center"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
           >
             <input
               type="text"
               required
               placeholder="Language"
               className="input-bordered input-primary input"
+              ref={languageRef}
             />
             <input
               type="text"
               required
               placeholder="Duration"
               className="input-bordered input-primary input input-md"
+              ref={durationRef}
             />
             <textarea
               required
               placeholder="Description"
               className="textarea-primary textarea"
+              ref={descriptionRef}
             />
             <input
               type="text"
               required
               placeholder="Date and Time, leave blank for current time"
               className="input-bordered input-primary input input-md"
+              ref={dateAndTimeRef}
             />
 
             <div className="flex flex-row justify-between">
@@ -115,9 +131,11 @@ const Home: NextPage = () => {
                 <option disabled selected>
                   Team
                 </option>
-                <option>Svelte</option>
-                <option>gaeuifgaiogerioug er8guh puqghpugh pugh p</option>
-                <option>React</option>
+                {teams.map((team, index) => (
+                  <option key={index} value={team}>
+                    {team}
+                  </option>
+                ))}
               </select>
 
               <select className="select-ghost select">
@@ -178,11 +196,17 @@ const Home: NextPage = () => {
               />
             </div>
 
-            <label htmlFor="my-modal" className="btn-primary btn">
-              Add
-            </label>
+            <button type="submit" className="btn-primary btn w-full">
+              <label htmlFor="my-modal" className="w-full">
+                Add
+              </label>
+            </button>
           </form>
-          <p className="">{"Temp text " + (rating as string)}</p>
+          <p className="">
+            {"This note will belong to TODO NAME and will be added to " +
+              ". Note will be in a “Personal” category. " +
+              (rating as string)}
+          </p>
         </label>
       </label>
 
