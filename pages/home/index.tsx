@@ -1,17 +1,26 @@
 import Logo from "@components/logo";
 import Note from "@components/note";
 
-import { Add } from "@mui/icons-material";
-
-import { useRef, useState } from "react";
-
 import Sidebar from "@components/sidebar";
 
 import { useAuth } from "@contexts/authContext";
 
 import { Record, Tag, TagId } from "@lib/types";
 
+import { Add } from "@mui/icons-material";
+
 import { NextPage } from "next";
+
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
+import CloseIcon from "@mui/icons-material/Close";
+
+import React, { useEffect, useRef, useState } from "react";
+
+type categoriesArrayType = {
+  name: string;
+  selected: boolean;
+}[];
 
 const Home: NextPage = () => {
   const [currentDirectoey, setCurrentDirectory] =
@@ -20,21 +29,78 @@ const Home: NextPage = () => {
   const { userData } = useAuth();
 
   const [teams, setTeams] = useState(["team 1", "team 2", "team 3"]);
-  const [categories, setCategories] = useState([
+  const [categories, setCategories] = useState<string[]>([
     "category 1",
     "category 2",
     "category 3",
   ]);
 
+  // ADD NEW STATES EXCEPT CATEGORY
   const languageRef = useRef<HTMLInputElement>(null);
   const durationRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const dateAndTimeRef = useRef<HTMLInputElement>(null);
-  const teamRef = useRef<HTMLInputElement>(null);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const dateRef = useRef<HTMLInputElement>(null);
+  const timeRef = useRef<HTMLInputElement>(null);
+  const teamRef = useRef<HTMLSelectElement>(null);
   const [rating, setRating] = useState<unknown>(1);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const [avilableCategories, setAvilableCategories] = useState<string[]>([]);
+  useEffect(() => {
+    setAvilableCategories(categories);
+  }, [categories]);
+  const addCatgoriesSelectHandle = (catName: string) => {
+    let categsTmp: string[] = [];
+    let selectedCategsTmp = selectedCategories;
+    avilableCategories.forEach((cat) => {
+      if (cat !== catName) categsTmp.push(cat);
+      else selectedCategsTmp.push(cat);
+    });
+    setAvilableCategories(categsTmp);
+    setSelectedCategories(selectedCategsTmp);
+  };
+  const removeCatgoriesSelectHandle = (catName: string) => {
+    let selectedCategsTmp: string[] = [];
+    let avilableCategsTmp = avilableCategories;
+    selectedCategories.forEach((cat) => {
+      if (cat !== catName) selectedCategsTmp.push(cat);
+      else avilableCategsTmp.push(cat);
+    });
+    setAvilableCategories(avilableCategsTmp);
+    setSelectedCategories(selectedCategsTmp);
+  };
 
   const [addNewModal, setAddNewModal] = useState<boolean>(false);
+
+  const resetAddNewNoteValues = () => {
+    if (languageRef.current?.value) {
+      languageRef.current.value = "";
+    }
+    if (durationRef.current?.value) {
+      durationRef.current.value = "";
+    }
+    if (descriptionRef.current?.value) {
+      descriptionRef.current.value = "";
+    }
+    if (dateRef.current?.value) {
+      dateRef.current.value = "";
+    }
+    if (timeRef.current?.value) {
+      timeRef.current.value = "";
+    }
+    setAvilableCategories(categories);
+    setSelectedCategories([]);
+  };
+  // currently when closing modal via close button, the values are preserved...
+
+  // FIX THE ANY, I DON'T WANT TO GOOGLE WHAT GOD DAMN TYPE IT IS...
+  const addNewNoteSubmitHandle = (e: any) => {
+    e.preventDefault();
+    resetAddNewNoteValues();
+    setAddNewModal(false);
+  };
+
+  const [personName, setPersonName] = React.useState<string[]>([]);
 
   const tags: { [k: TagId]: Tag } = {
     icIelKOni9WSwgsm8fRQ: {
@@ -108,22 +174,7 @@ const Home: NextPage = () => {
           <form
             action=""
             className="my-4 flex w-full flex-col justify-center gap-2 text-center"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (languageRef.current?.value) {
-                languageRef.current.value = "";
-              }
-              if (durationRef.current?.value) {
-                durationRef.current.value = "";
-              }
-              if (descriptionRef.current?.value) {
-                descriptionRef.current.value = "";
-              }
-              if (dateAndTimeRef.current?.value) {
-                dateAndTimeRef.current.value = "";
-              }
-              setAddNewModal(false);
-            }}
+            onSubmit={addNewNoteSubmitHandle}
           >
             <input
               required
@@ -134,6 +185,7 @@ const Home: NextPage = () => {
             <input
               required
               placeholder="Duration"
+              type="number"
               className="input-bordered input-primary input input-md"
               ref={durationRef}
             />
@@ -143,33 +195,66 @@ const Home: NextPage = () => {
               ref={descriptionRef}
             />
             <input
-              required
-              placeholder="Date and Time, leave blank for current time"
+              type="date"
               className="input-bordered input-primary input input-md"
-              ref={dateAndTimeRef}
+              ref={dateRef}
+            />
+            <input
+              type="time"
+              className="input-bordered input-primary input input-md"
+              ref={timeRef}
             />
 
-            <div className="flex flex-row justify-between">
-              <select className="select-ghost select">
-                <option disabled selected>
-                  Team
-                </option>
-                {teams.map((team, index) => (
-                  <option key={index} value={team}>
-                    {team}
-                  </option>
-                ))}
-              </select>
+            <span className="flex flex-row justify-between">
+              <div className=" flex w-full flex-row items-center overflow-auto overflow-y-hidden rounded-lg border border-primary pl-2">
+                {selectedCategories.length != 0 ? (
+                  selectedCategories.map((cat, index) => (
+                    <button
+                      className="btn-ghost btn"
+                      key={index}
+                      onClick={() => {
+                        removeCatgoriesSelectHandle(cat);
+                      }}
+                    >
+                      <CloseIcon></CloseIcon>
+                      {" " + cat}
+                    </button>
+                  ))
+                ) : (
+                  <span className="m-auto">Select Categories</span>
+                )}
+              </div>
 
-              <select className="select-ghost select">
-                <option disabled selected>
-                  Category
+              <div className="dropdown-middle dropdown-hover dropdown dropdown-end max-w-max">
+                <label tabIndex={0} className="btn btn ml-4">
+                  <ArrowDropDownIcon></ArrowDropDownIcon>
+                </label>
+
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+                >
+                  {avilableCategories.map((cat, index) => (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        addCatgoriesSelectHandle(cat);
+                      }}
+                    >
+                      {cat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </span>
+
+            <select className="select-primary select" ref={teamRef}>
+              {teams.map((team, index) => (
+                <option key={index} value={team}>
+                  {team}
                 </option>
-                <option>Svelte</option>
-                <option>Vue</option>
-                <option>React</option>
-              </select>
-            </div>
+              ))}
+            </select>
 
             <div className="rating mx-auto mb-4">
               <input
@@ -234,7 +319,9 @@ const Home: NextPage = () => {
           <span>{currentDirectoey}</span>
           <label
             className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
-            onClick={() => setAddNewModal(true)}
+            onClick={() => {
+              setAddNewModal(true);
+            }}
           >
             <Add className="h-8 w-8"></Add>
           </label>
