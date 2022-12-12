@@ -34,6 +34,8 @@ const Home: NextPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [rating, setRating] = useState<unknown>(1);
 
+  const [addNewModal, setAddNewModal] = useState<boolean>(false);
+
   const tags: { [k: TagId]: Tag } = {
     icIelKOni9WSwgsm8fRQ: {
       description: "personal",
@@ -86,40 +88,61 @@ const Home: NextPage = () => {
 
   return (
     <div className="flex h-screen w-screen flex-col bg-base-100">
-      {/* Modal */}
-      <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <label htmlFor="my-modal" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
+      <input
+        type="checkbox"
+        id="add-new-modal"
+        checked={addNewModal}
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <button
+            onClick={() => {
+              setAddNewModal(false);
+            }}
+            className="btn-sm btn-circle btn absolute right-2 top-2"
+          >
+            ✕
+          </button>
           <h3 className="text-lg font-bold">Add new Note</h3>
           <form
             action=""
             className="my-4 flex w-full flex-col justify-center gap-2 text-center"
             onSubmit={(e) => {
               e.preventDefault();
+              if (languageRef.current?.value) {
+                languageRef.current.value = "";
+              }
+              if (durationRef.current?.value) {
+                durationRef.current.value = "";
+              }
+              if (descriptionRef.current?.value) {
+                descriptionRef.current.value = "";
+              }
+              if (dateAndTimeRef.current?.value) {
+                dateAndTimeRef.current.value = "";
+              }
+              setAddNewModal(false);
             }}
           >
             <input
-              type="text"
               required
               placeholder="Language"
               className="input-bordered input-primary input"
               ref={languageRef}
             />
             <input
-              type="text"
               required
               placeholder="Duration"
               className="input-bordered input-primary input input-md"
               ref={durationRef}
             />
             <textarea
-              required
               placeholder="Description"
               className="textarea-primary textarea"
               ref={descriptionRef}
             />
             <input
-              type="text"
               required
               placeholder="Date and Time, leave blank for current time"
               className="input-bordered input-primary input input-md"
@@ -197,18 +220,11 @@ const Home: NextPage = () => {
             </div>
 
             <button type="submit" className="btn-primary btn w-full">
-              <label htmlFor="my-modal" className="w-full">
-                Add
-              </label>
+              Add
             </button>
           </form>
-          <p className="">
-            {"This note will belong to TODO NAME and will be added to " +
-              ". Note will be in a “Personal” category. " +
-              (rating as string)}
-          </p>
-        </label>
-      </label>
+        </div>
+      </div>
 
       <div className="z-50 flex h-16 w-screen flex-row gap-x-4 bg-neutral text-neutral-content shadow-lg shadow-base-content/5">
         <span className="w-64px px-3">
@@ -217,8 +233,8 @@ const Home: NextPage = () => {
         <span className="mx-auto my-auto flex w-1/2 justify-between">
           <span>{currentDirectoey}</span>
           <label
-            className="h-8 w-8 rounded-full bg-primary hover:opacity-75"
-            htmlFor="my-modal"
+            className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
+            onClick={() => setAddNewModal(true)}
           >
             <Add className="h-8 w-8"></Add>
           </label>
