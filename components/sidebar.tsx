@@ -7,12 +7,24 @@ import { FC, useContext } from "react";
 
 import { Add } from "@mui/icons-material";
 
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+type categoryObjType = {
+  name: string;
+  color: string;
+};
+
 const Sidebar: FC = () => {
   const { userData } = useAuth();
   const { setTheme } = useContext(ThemeContext);
 
   const [addNewModal, setAddNewModal] = useState<boolean>(false);
   const [addNewTeamModal, setAddNewTeamModal] = useState<boolean>(false);
+
+  const [categories, setCategories] = useState<categoryObjType[]>([
+    { name: "test", color: "red" },
+    { name: "test 2", color: "blue" },
+  ]);
 
   const categoryNameRef = useRef<HTMLInputElement>(null);
   const categoryColorRef = useRef<HTMLInputElement>(null);
@@ -162,6 +174,14 @@ const Sidebar: FC = () => {
             ></Add>
           </span>
           <span className="my-2 h-1 w-full bg-base-100" />
+          {categories.map((cat, index) => (
+            <span key={index} className="flex w-full flex-row items-center">
+              <MoreVertIcon fontSize="small" className="mr-2"></MoreVertIcon>
+              <button style={{ color: cat.color }} className="text-lg">
+                {cat.name}
+              </button>
+            </span>
+          ))}
         </div>
       </nav>
       <div id="themechange" className="mt-auto">
