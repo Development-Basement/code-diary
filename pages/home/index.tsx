@@ -225,24 +225,25 @@ const Home: NextPage = () => {
                 )}
               </div>
 
-              <div className="dropdown-middle dropdown-hover dropdown dropdown-end max-w-max">
+              <div className="dropdown-middle dropdown-hover dropdown-end dropdown max-w-max">
                 <label tabIndex={0} className="btn btn ml-4">
                   <ArrowDropDownIcon></ArrowDropDownIcon>
                 </label>
 
                 <ul
                   tabIndex={0}
-                  className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+                  className="dropdown-content menu rounded-box w-52 border border-black bg-base-100 p-2 shadow"
                 >
                   {avilableCategories.map((cat, index) => (
-                    <li
+                    <button
+                      className="btn-ghost btn hover:cursor-pointer"
                       key={index}
                       onClick={() => {
                         addCatgoriesSelectHandle(cat);
                       }}
                     >
                       {cat}
-                    </li>
+                    </button>
                   ))}
                 </ul>
               </div>
