@@ -1,6 +1,8 @@
 import { useAuth } from "@contexts/authContext";
 import { possibleThemes, ThemeContext } from "@contexts/themeContext";
 
+import { useRef, useState } from "react";
+
 import { FC, useContext } from "react";
 
 import { Add } from "@mui/icons-material";
@@ -9,22 +11,131 @@ const Sidebar: FC = () => {
   const { userData } = useAuth();
   const { setTheme } = useContext(ThemeContext);
 
+  const [addNewModal, setAddNewModal] = useState<boolean>(false);
+  const [addNewTeamModal, setAddNewTeamModal] = useState<boolean>(false);
+
+  const categoryNameRef = useRef<HTMLInputElement>(null);
+  const categoryColorRef = useRef<HTMLInputElement>(null);
+  const teamNameRef = useRef<HTMLInputElement>(null);
+
   const addNewTeamHandle = () => {
-    console.log("Adding new team..."); // REMOVE LATER
+    setAddNewTeamModal(true);
   };
 
   const addNewCategoryHandle = () => {
-    console.log("Adding new category..."); // REMOVE LATER
+    setAddNewModal(true);
+  };
+
+  const resetAddNewCategoryValues = () => {
+    if (categoryColorRef.current?.value && categoryNameRef.current?.value) {
+      categoryNameRef.current.value = "";
+      categoryColorRef.current.value = "";
+    }
+  };
+
+  const resetAddNewTeamValues = () => {
+    if (teamNameRef.current?.value) {
+      teamNameRef.current.value = "";
+    }
+  };
+
+  // AGAIN.... THE ANY...
+  const addNewCategorySubmitHandle = (e: any) => {
+    e.preventDefault();
+    // ADD ADDING LOGIC HERE...
+    resetAddNewCategoryValues();
+    setAddNewModal(false);
+  };
+
+  // AGAIN.... THE ANY...
+  const addNewTeamSubmitHandle = (e: any) => {
+    e.preventDefault();
+    // ADD ADDING LOGIC HERE
+    resetAddNewTeamValues();
+    setAddNewTeamModal(false);
   };
 
   return (
     <div className="flex h-full w-64 flex-col bg-neutral p-3 text-neutral-content">
-      <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <label htmlFor="my-modal" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
-          <h3 className="text-lg font-bold">Add new Note</h3>
-        </label>
-      </label>
+      <input
+        type="checkbox"
+        id="add-new-modal"
+        checked={addNewModal}
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <button
+            onClick={() => {
+              setAddNewModal(false);
+            }}
+            className="btn btn-sm btn-circle absolute right-2 top-2"
+          >
+            ✕
+          </button>
+          <h3 className="text-lg font-bold">Add new Category</h3>
+          <form
+            action=""
+            className="my-4 flex w-full flex-col justify-center gap-2 text-center"
+            onSubmit={(e) => addNewCategorySubmitHandle(e)}
+          >
+            <input
+              required
+              placeholder="Category Name..."
+              className="input-bordered input-primary input"
+              ref={categoryNameRef}
+            />
+            <div className="flex h-12 flex-row items-center">
+              <span className="mr-4 ml-2">Color: </span>
+              <input
+                required
+                type="color"
+                placeholder="Category Name..."
+                className="h-full w-full bg-transparent"
+                ref={categoryColorRef}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Add Category
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <input
+        type="checkbox"
+        id="add-new-team-modal"
+        checked={addNewTeamModal}
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <button
+            onClick={() => {
+              setAddNewTeamModal(false);
+            }}
+            className="btn btn-sm btn-circle absolute right-2 top-2"
+          >
+            ✕
+          </button>
+          <h3 className="text-lg font-bold">Add new Team</h3>
+          <form
+            action=""
+            className="my-4 flex w-full flex-col justify-center gap-2 text-center"
+            onSubmit={(e) => addNewTeamSubmitHandle(e)}
+          >
+            <input
+              required
+              placeholder="Team Name..."
+              className="input-bordered input-primary input"
+              ref={teamNameRef}
+            />
+            <button type="submit" className="btn btn-primary">
+              Add Team
+            </button>
+          </form>
+        </div>
+      </div>
 
       <nav className="flex flex-col">
         <div className="mb-8 flex h-min w-full flex-col">
