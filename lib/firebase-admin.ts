@@ -18,7 +18,7 @@ function createFirebaseAdminApp(config: AppOptions): App {
 }
 
 const aServiceAccount: ServiceAccount = {
-  projectId: process.env.PROJECT_ID,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   clientEmail: process.env.CLIENT_EMAIL,
   privateKey: process.env.PRIVATE_KEY,
 };
