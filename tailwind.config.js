@@ -23,7 +23,7 @@ module.exports = {
           info: "#000000",
           success: "#000000",
           warning: "#000000",
-          error: "#000000",
+          error: "#ff0000",
         },
       },
       "halloween",

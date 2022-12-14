@@ -1,11 +1,8 @@
 import Logo from "@components/logo";
-import Note from "@components/note";
 
 import Sidebar from "@components/sidebar";
 
 import { useAuth } from "@contexts/authContext";
-
-import { Record, Tag, TagId } from "@lib/types";
 
 import { Add } from "@mui/icons-material";
 
@@ -14,6 +11,10 @@ import { NextPage } from "next";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import CloseIcon from "@mui/icons-material/Close";
+
+import SettingsIcon from "@mui/icons-material/Settings";
+
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import React, { useEffect, useRef, useState } from "react";
 
@@ -102,6 +103,8 @@ const Home: NextPage = () => {
 
   const [personName, setPersonName] = React.useState<string[]>([]);
 
+  // DUMMY DATA
+  /*
   const tags: { [k: TagId]: Tag } = {
     icIelKOni9WSwgsm8fRQ: {
       description: "personal",
@@ -151,6 +154,7 @@ const Home: NextPage = () => {
       ],
     },
   ];
+*/
 
   return (
     <div className="flex h-screen w-screen flex-col bg-base-100">
@@ -318,20 +322,49 @@ const Home: NextPage = () => {
         </span>
         <span className="mx-auto my-auto flex w-1/2 justify-between">
           <span>{currentDirectoey}</span>
-          <label
-            className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
-            onClick={() => {
-              setAddNewModal(true);
-            }}
-          >
-            <Add className="h-8 w-8"></Add>
-          </label>
+          <span className="flex flex-row">
+            <label
+              className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
+              onClick={() => {
+                setAddNewModal(true);
+              }}
+            >
+              <Add className="h-8 w-8"></Add>
+            </label>
+            <div className="dropdown-end dropdown">
+              <button
+                tabIndex={0}
+                style={{
+                  backgroundColor: userData.profileColor ?? "grey",
+                }}
+                className="my-auto ml-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary hover:opacity-75"
+              ></button>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu rounded-box w-52 gap-2 bg-base-100 p-2 shadow"
+              >
+                <li>My account info...</li>
+                <li>
+                  <button className="btn-ghost btn justify-start">
+                    <SettingsIcon></SettingsIcon>
+                    Settings
+                  </button>
+                </li>
+                <li>
+                  <button className="btn-ghost btn justify-start text-error">
+                    <LogoutIcon></LogoutIcon>
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </span>
         </span>
       </div>
       <main className="flex grow flex-row overflow-y-hidden">
         <Sidebar />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
-          {records.map((record) => (
+          {/*records.map((record) => (
             <Note
               {...record}
               username={userData.username}
@@ -341,7 +374,7 @@ const Home: NextPage = () => {
                 .filter((t) => t !== undefined)}
               key={JSON.stringify(record)}
             />
-          ))}
+              ))*/}
         </div>
       </main>
     </div>

@@ -81,7 +81,7 @@ const Sidebar: FC = () => {
             onClick={() => {
               setAddNewModal(false);
             }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
+            className="btn-sm btn-circle btn absolute right-2 top-2"
           >
             ✕
           </button>
@@ -107,7 +107,7 @@ const Sidebar: FC = () => {
                 ref={categoryColorRef}
               />
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn-primary btn">
               Add Category
             </button>
           </form>
@@ -126,7 +126,7 @@ const Sidebar: FC = () => {
             onClick={() => {
               setAddNewTeamModal(false);
             }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
+            className="btn-sm btn-circle btn absolute right-2 top-2"
           >
             ✕
           </button>
@@ -142,7 +142,7 @@ const Sidebar: FC = () => {
               className="input-bordered input-primary input"
               ref={teamNameRef}
             />
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn-primary btn">
               Add Team
             </button>
           </form>
