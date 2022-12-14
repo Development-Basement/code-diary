@@ -5,11 +5,8 @@ export default function Document() {
   return (
     <Html data-theme={DEFAULT_THEME}>
       <Head>
-        <link
-          rel="stylesheet"
-          href="https://use.typekit.net/bit7rvm.css"
-        ></link>
-        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+        <link rel="stylesheet" href="https://use.typekit.net/bit7rvm.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
       </Head>
       <body>
         <Main />

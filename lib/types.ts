@@ -8,6 +8,7 @@ import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
+  Timestamp,
 } from "firebase/firestore";
 
 import React from "react";
@@ -59,7 +60,7 @@ export type Tag = {
 };
 
 export type Record = {
-  date: Date;
+  date: Timestamp;
   description: string;
   language: string;
   minutesSpent: number;

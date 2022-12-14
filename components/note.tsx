@@ -4,13 +4,14 @@ import TagLabel from "@components/tag";
 import { Color, Tag } from "@lib/types";
 
 import { AccountCircle } from "@mui/icons-material";
+import { Timestamp } from "firebase/firestore";
 
 import { FC } from "react";
 
 export type NoteProps = {
   username: string | null;
   userColor: Color | null;
-  date: Date;
+  date: Timestamp;
   description: string;
   language: string;
   minutesSpent: number;
@@ -43,7 +44,7 @@ const Note: FC<NoteProps> = ({
           <div className="flex grow flex-col">
             <div className="flex justify-between gap-4 font-bold">
               <span>{username}</span>
-              <span>{date.toDateString()}</span>
+              <span>{date.toDate().toDateString()}</span>
             </div>
             <p className="mb-2">
               <span className="font-bold text-success">{language}</span> for{" "}
