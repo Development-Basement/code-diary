@@ -36,9 +36,6 @@ const Home: NextPage = () => {
   const [records, setRecords] = useState<Array<Record>>([]);
   const [addNewModal, setAddNewModal] = useState<boolean>(false);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
-  const [currentDirectory, setCurrentDirectory] = useState("Default directory");
-  const [groups, setGroups] = useState(["team 1", "team 2", "team 3"]);
-  // going to get nuked soon^TM
   const [categories, setCategories] = useState([
     "category 1",
     "category 2",
@@ -55,7 +52,6 @@ const Home: NextPage = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dateRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLInputElement>(null);
-  const teamRef = useRef<HTMLSelectElement>(null);
 
   const getUserRecordsRef = (uid: string) => {
     return collection(db, "userRecords", uid, "records").withConverter(
@@ -69,7 +65,7 @@ const Home: NextPage = () => {
     );
   };
 
-  const addCatgoriesSelectHandle = (catName: string) => {
+  function addCatgoriesSelectHandle(catName: string) {
     const categsTmp: Array<string> = [];
     const selectedCategsTmp = selectedCategories;
     avilableCategories.forEach((cat) => {
@@ -78,9 +74,9 @@ const Home: NextPage = () => {
     });
     setAvilableCategories(categsTmp);
     setSelectedCategories(selectedCategsTmp);
-  };
+  }
 
-  const removeCatgoriesSelectHandle = (catName: string) => {
+  function removeCatgoriesSelectHandle(catName: string) {
     const selectedCategsTmp: Array<string> = [];
     const avilableCategsTmp = avilableCategories;
     selectedCategories.forEach((cat) => {
@@ -89,7 +85,7 @@ const Home: NextPage = () => {
     });
     setAvilableCategories(avilableCategsTmp);
     setSelectedCategories(selectedCategsTmp);
-  };
+  }
 
   const resetAddNewNoteValues = () => {
     languageRef.current!.value = "";
@@ -222,7 +218,8 @@ const Home: NextPage = () => {
                     <button
                       className="btn-ghost btn"
                       key={index}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         removeCatgoriesSelectHandle(cat);
                       }}
                     >
@@ -235,9 +232,9 @@ const Home: NextPage = () => {
                 )}
               </div>
 
-              <div className="dropdown-middle dropdown-hover dropdown-end dropdown max-w-max">
+              <div className="dropdown-end dropdown-hover dropdown dropdown-top max-w-max">
                 <label tabIndex={0} className="btn ml-4">
-                  <ArrowDropDownIcon />
+                  <ArrowDropDownIcon></ArrowDropDownIcon>
                 </label>
 
                 <ul
@@ -248,7 +245,8 @@ const Home: NextPage = () => {
                     <button
                       className="btn-ghost btn hover:cursor-pointer"
                       key={index}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         addCatgoriesSelectHandle(cat);
                       }}
                     >
@@ -258,15 +256,6 @@ const Home: NextPage = () => {
                 </ul>
               </div>
             </span>
-
-            <select className="select-primary select" ref={teamRef}>
-              {groups.map((team, index) => (
-                <option key={index} value={team}>
-                  {team}
-                </option>
-              ))}
-            </select>
-
             <div className="rating mx-auto mb-4">
               <input
                 type="radio"
@@ -379,7 +368,6 @@ const Home: NextPage = () => {
           <Logo rem={2} />
         </span>
         <span className="mx-auto my-auto flex w-1/2 justify-between">
-          <span>{currentDirectory}</span>
           <span className="flex flex-row">
             <label
               className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
