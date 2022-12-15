@@ -343,7 +343,17 @@ const Home: NextPage = () => {
                 tabIndex={0}
                 className="dropdown-content menu rounded-box w-52 gap-2 bg-base-100 p-2 shadow"
               >
-                <li>My account info...</li>
+                <li className="mt-3 flex flex-row items-center justify-start border-b border-neutral pb-5 hover:cursor-default">
+                  <span
+                    tabIndex={0}
+                    style={{
+                      backgroundColor: userData.profileColor ?? "grey",
+                      borderRadius: "50%",
+                    }}
+                    className="ml-3 mr-2 flex h-8 w-8 items-center justify-center hover:cursor-default"
+                  ></span>
+                  <>{userData.username ?? "No username?"}</>
+                </li>
                 <li>
                   <button className="btn-ghost btn justify-start">
                     <SettingsIcon></SettingsIcon>
