@@ -19,7 +19,7 @@ const Stars: FC<StarProps> = ({ rating, setRating }) => {
           type="radio"
           className="mask mask-star-2 cursor-default bg-success"
           disabled={isDisabled}
-          checked={rating === i}
+          defaultChecked={rating === i}
           onClick={() => {
             if (setRating) {
               setRating(i);

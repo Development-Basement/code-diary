@@ -1,5 +1,4 @@
 import { auth, db } from "@lib/firebase";
-
 import {
   Color,
   converter,
@@ -7,13 +6,11 @@ import {
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
-
 import {
   createUserWithEmailAndPassword,
   onIdTokenChanged,
   User,
 } from "firebase/auth";
-
 import {
   collection,
   doc,
@@ -25,9 +22,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-
+import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-
 import { useAuthState } from "react-firebase-hooks/auth";
 
 type UserData = {
@@ -63,6 +59,8 @@ export const UsernameRegex = /^[a-zA-Z0-9-_]{3,15}$/;
 
 export function AuthProvider({ children }: { children: JSX.Element }) {
   const [user, , error] = useAuthState(auth);
+
+  const router = useRouter();
 
   const [username, setUsername] = useState<string | null>(null);
   const [profileColor, setProfileColor] = useState<Color | null>(null);
@@ -119,6 +117,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   async function changeUsername(newUsername: string) {
+    // not needed, since every user is "alone"
     // if (await isUsernameInUserDatabase(newUsername)) {
     //   throw new Error("Username already in database");
     // }
@@ -133,13 +132,16 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   useEffect(() => {
+    const authDomains = ["/login", "/signup"];
     if (!user) {
       setUsername(null);
       setProfileColor(null);
       setInvites([]);
       setGroups([]);
+      if (!authDomains.includes(router.route)) router.push("/login");
       return;
     }
+    if (authDomains.includes(router.route)) router.push("/home");
     const pubUnsub = onSnapshot(
       getPublicDocRef(user.uid),
       (pubDoc) => {

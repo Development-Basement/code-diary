@@ -1,4 +1,5 @@
 import Logo from "@components/logo";
+import Spinner from "@components/spinner";
 import { useAuth } from "@contexts/authContext";
 import { auth } from "@lib/firebase";
 import { ButtonHandler } from "@lib/types";
@@ -65,13 +66,34 @@ const Topbar: FC<TopbarProps> = ({ addNewOnClick, settingsOnClick }) => {
             <li>
               <button
                 className="btn-ghost btn justify-start text-error"
+                disabled={loading}
                 onClick={() => {
                   logout();
                 }}
               >
-                <LogoutIcon />
-                Logout
+                {loading ? (
+                  <span className="flex place-items-center">
+                    <span className="mr-2 h-4 w-4">
+                      <Spinner />
+                    </span>
+                    Loading...
+                  </span>
+                ) : (
+                  <>
+                    <LogoutIcon />
+                    Logout
+                  </>
+                )}
               </button>
+              {error ? (
+                <div className="alert alert-error mt-3">
+                  <p className="block overflow-hidden text-ellipsis whitespace-normal break-words">
+                    {error.message}
+                  </p>
+                </div>
+              ) : (
+                <></>
+              )}
             </li>
           </ul>
         </div>

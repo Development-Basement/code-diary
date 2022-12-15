@@ -67,25 +67,15 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (currentUser == null) {
-      console.error("You should NOT be here at all");
       return;
     }
-
-    const tagsUnsub = onSnapshot(
-      getUserTagsRef(currentUser.uid),
-      (snap) => {
-        const newTags: TagMap = {};
-        snap.docs.forEach((doc) => {
-          newTags[doc.id] = doc.data();
-        });
-        setTags(newTags);
-      },
-      (err) => {
-        // for development purposes
-        // TODO: delete this ;)
-        console.log(err.message);
-      },
-    );
+    const tagsUnsub = onSnapshot(getUserTagsRef(currentUser.uid), (snap) => {
+      const newTags: TagMap = {};
+      snap.docs.forEach((doc) => {
+        newTags[doc.id] = doc.data();
+      });
+      setTags(newTags);
+    });
     const recordsUnsub = onSnapshot(
       getUserRecordsRef(currentUser.uid),
       (snap) => {
@@ -97,13 +87,7 @@ const Home: NextPage = () => {
         newRecords.sort((a, b) => (a.date > b.date ? 1 : -1));
         setRecords(newRecords);
       },
-      (err) => {
-        // for development purposes
-        // TODO: delete this ;)
-        console.log(err.message);
-      },
     );
-
     return () => {
       tagsUnsub();
       recordsUnsub();

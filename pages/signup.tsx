@@ -102,6 +102,7 @@ const SignUpForm: FC = () => {
       />
       <button
         type="submit"
+        disabled={loading}
         className="btn-primary btn-md btn mt-3 text-base font-bold"
       >
         {loading ? (

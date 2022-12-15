@@ -9,8 +9,8 @@
 - [ ] `usercolor` editing
 - [ ] `username` editing
 - [ ] `DB rules` fiesta (tags, notes)
-- [ ] `login` and `signout` loading and error handling
-- [ ] onAuthStateChanged page `redirects`
+- [x] `login` and `signout` loading and error handling
+- [x] onAuthStateChanged page `redirects`
 - [ ] **minimum `viable` product `reached`**
 - [ ] `Dockerfile`
 - [ ] duplicate `Firebase project` to isolate prod 🚀 from dev
@@ -23,8 +23,8 @@
 - [x] `tag filtering`
 - [ ] **MERGE RICHARD'S CHANGES** (at some point)
 - [ ] go full **`production-ready`**
-  - [ ] delete `/api/__allUsers.ts`
+  - [x] delete `/api/__allUsers.ts`
   - [ ] redirect in `/` (maybe just enough to add in middleware)
-  - [ ] delete `test/userDoc.tsx`
+  - [x] delete `test/userDoc.tsx`
 - [ ] test `Note` behavior if a lot of tags are present (overflow?)
 - [ ] **GO FUCKING TOUCH GRASS AND `SLEEP`**
