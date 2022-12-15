@@ -16,18 +16,19 @@ import SettingsIcon from "@mui/icons-material/Settings";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
-type categoriesArrayType = {
-  name: string;
-  selected: boolean;
-}[];
+import { possibleThemes, ThemeContext } from "@contexts/themeContext";
 
 const Home: NextPage = () => {
   const [currentDirectoey, setCurrentDirectory] =
     useState<string>("Default directory");
 
   const { userData } = useAuth();
+
+  const { setTheme, theme } = useContext(ThemeContext);
+
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
   const [teams, setTeams] = useState(["team 1", "team 2", "team 3"]);
   const [categories, setCategories] = useState<string[]>([
@@ -316,6 +317,58 @@ const Home: NextPage = () => {
         </div>
       </div>
 
+      <input
+        type="checkbox"
+        id="add-new-modal"
+        checked={settingsOpen}
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <button
+            onClick={() => {
+              setSettingsOpen(false);
+            }}
+            className="btn-sm btn-circle btn absolute right-2 top-2"
+          >
+            ✕
+          </button>
+          <h3 className="mb-4 text-lg font-bold">Settings</h3>
+          <h4 className="text-md mb-4 font-bold">Theme - {theme}</h4>
+          <span className="grid-cols grid grid-cols-3 gap-4">
+            {possibleThemes.map((theme) => (
+              <div
+                key={theme}
+                onClick={() => {
+                  setTheme(theme);
+                }}
+                data-theme={theme}
+                className="flex flex-col items-center justify-center rounded-lg border border-primary p-0 hover:cursor-pointer"
+              >
+                <span className="h-min w-min p-4">{theme}</span>
+                <div className="m-0 flex h-6 w-full flex-row rounded-b-lg">
+                  <span
+                    className="h-full flex-1 bg-primary"
+                    style={{ borderRadius: "0px 0px 0px 0.5rem" }}
+                  ></span>
+                  <span className="h-full flex-1 bg-secondary"></span>
+                  <span className="h-full flex-1 bg-accent"></span>
+                  <span className="h-full flex-1 bg-neutral"></span>
+                  <span className="h-full flex-1 bg-base-100"></span>
+                  <span className="h-full flex-1 bg-info"></span>
+                  <span className="h-full flex-1 bg-warning"></span>
+                  <span className="h-full flex-1 bg-success"></span>
+                  <span
+                    className="h-full flex-1 bg-error"
+                    style={{ borderRadius: "0px 0px 0.5rem 0px" }}
+                  ></span>
+                </div>
+              </div>
+            ))}
+          </span>
+        </div>
+      </div>
+
       <div className="z-50 flex h-16 w-screen flex-row gap-x-4 bg-neutral text-neutral-content shadow-lg shadow-base-content/5">
         <span className="w-64px px-3">
           <Logo rem={2} />
@@ -355,7 +408,12 @@ const Home: NextPage = () => {
                   <>{userData.username ?? "No username?"}</>
                 </li>
                 <li>
-                  <button className="btn-ghost btn justify-start">
+                  <button
+                    className="btn-ghost btn justify-start"
+                    onClick={() => {
+                      setSettingsOpen(true);
+                    }}
+                  >
                     <SettingsIcon></SettingsIcon>
                     Settings
                   </button>
