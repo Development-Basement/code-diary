@@ -30,7 +30,6 @@ const Home: NextPage = () => {
 
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
-  const [teams, setTeams] = useState(["team 1", "team 2", "team 3"]);
   const [categories, setCategories] = useState<string[]>([
     "category 1",
     "category 2",
@@ -43,14 +42,15 @@ const Home: NextPage = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dateRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLInputElement>(null);
-  const teamRef = useRef<HTMLSelectElement>(null);
   const [rating, setRating] = useState<unknown>(1);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const [avilableCategories, setAvilableCategories] = useState<string[]>([]);
+
   useEffect(() => {
     setAvilableCategories(categories);
   }, [categories]);
+
   const addCatgoriesSelectHandle = (catName: string) => {
     let categsTmp: string[] = [];
     let selectedCategsTmp = selectedCategories;
@@ -61,6 +61,7 @@ const Home: NextPage = () => {
     setAvilableCategories(categsTmp);
     setSelectedCategories(selectedCategsTmp);
   };
+
   const removeCatgoriesSelectHandle = (catName: string) => {
     let selectedCategsTmp: string[] = [];
     let avilableCategsTmp = avilableCategories;
@@ -218,7 +219,8 @@ const Home: NextPage = () => {
                     <button
                       className="btn-ghost btn"
                       key={index}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         removeCatgoriesSelectHandle(cat);
                       }}
                     >
@@ -231,7 +233,7 @@ const Home: NextPage = () => {
                 )}
               </div>
 
-              <div className="dropdown-middle dropdown-hover dropdown-end dropdown max-w-max">
+              <div className="dropdown-end dropdown-hover dropdown dropdown-top max-w-max">
                 <label tabIndex={0} className="btn btn ml-4">
                   <ArrowDropDownIcon></ArrowDropDownIcon>
                 </label>
@@ -244,7 +246,8 @@ const Home: NextPage = () => {
                     <button
                       className="btn-ghost btn hover:cursor-pointer"
                       key={index}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         addCatgoriesSelectHandle(cat);
                       }}
                     >
@@ -254,14 +257,6 @@ const Home: NextPage = () => {
                 </ul>
               </div>
             </span>
-
-            <select className="select-primary select" ref={teamRef}>
-              {teams.map((team, index) => (
-                <option key={index} value={team}>
-                  {team}
-                </option>
-              ))}
-            </select>
 
             <div className="rating mx-auto mb-4">
               <input

@@ -21,7 +21,6 @@ const Sidebar: FC = () => {
   const { setTheme } = useContext(ThemeContext);
 
   const [addNewModal, setAddNewModal] = useState<boolean>(false);
-  const [addNewTeamModal, setAddNewTeamModal] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<categoryObjType[]>([
     { name: "test", color: "red" },
@@ -30,11 +29,6 @@ const Sidebar: FC = () => {
 
   const categoryNameRef = useRef<HTMLInputElement>(null);
   const categoryColorRef = useRef<HTMLInputElement>(null);
-  const teamNameRef = useRef<HTMLInputElement>(null);
-
-  const addNewTeamHandle = () => {
-    setAddNewTeamModal(true);
-  };
 
   const addNewCategoryHandle = () => {
     setAddNewModal(true);
@@ -47,12 +41,6 @@ const Sidebar: FC = () => {
     }
   };
 
-  const resetAddNewTeamValues = () => {
-    if (teamNameRef.current?.value) {
-      teamNameRef.current.value = "";
-    }
-  };
-
   // AGAIN.... THE ANY...
   // again.... the facepalm
   const addNewCategorySubmitHandle: FormSubmitHandler = (e) => {
@@ -60,15 +48,6 @@ const Sidebar: FC = () => {
     // ADD ADDING LOGIC HERE...
     resetAddNewCategoryValues();
     setAddNewModal(false);
-  };
-
-  // AGAIN.... THE ANY...
-  // again.... the facepalm
-  const addNewTeamSubmitHandle: FormSubmitHandler = (e) => {
-    e.preventDefault();
-    // ADD ADDING LOGIC HERE
-    resetAddNewTeamValues();
-    setAddNewTeamModal(false);
   };
 
   return (
@@ -119,56 +98,7 @@ const Sidebar: FC = () => {
         </div>
       </div>
 
-      <input
-        type="checkbox"
-        id="add-new-team-modal"
-        checked={addNewTeamModal}
-        readOnly
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box relative">
-          <button
-            onClick={() => {
-              setAddNewTeamModal(false);
-            }}
-            className="btn-sm btn-circle btn absolute right-2 top-2"
-          >
-            ✕
-          </button>
-          <h3 className="text-lg font-bold">Add new Team</h3>
-          <form
-            action=""
-            className="my-4 flex w-full flex-col justify-center gap-2 text-center"
-            onSubmit={(e) => addNewTeamSubmitHandle(e)}
-          >
-            <input
-              required
-              placeholder="Team Name..."
-              className="input-bordered input-primary input"
-              ref={teamNameRef}
-            />
-            <button type="submit" className="btn-primary btn">
-              Add Team
-            </button>
-          </form>
-        </div>
-      </div>
-
       <nav className="flex flex-col">
-        <div className="mb-8 flex h-min w-full flex-col">
-          <span className="flex flex-row items-center justify-between">
-            <h2 className="text-3xl">Teams</h2>
-            <Add
-              className="hover:cursor-pointer hover:opacity-70"
-              onClick={() => {
-                addNewTeamHandle();
-              }}
-            ></Add>
-          </span>
-          <span className="my-2 h-1 w-full bg-base-100" />
-          <h3 className="text-2xl">Personal</h3>
-        </div>
         <div className="mb-8 flex h-min w-full flex-col">
           <span className="flex flex-row items-center justify-between">
             <h2 className="text-3xl">Categories</h2>
