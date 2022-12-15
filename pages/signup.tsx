@@ -6,13 +6,9 @@ import { FormSubmitHandler } from "@lib/types";
 
 import { AuthError } from "firebase/auth";
 
-import Link from "next/link";
-
 import { FC, useRef, useState } from "react";
 
 export default function Index() {
-  const sent = false;
-
   return (
     <div className="flex h-screen items-center justify-center bg-neutral">
       <main
@@ -20,7 +16,7 @@ export default function Index() {
        bg-base-100 pb-32 pt-16 shadow-2xl drop-shadow-2xl"
       >
         <h1 className="mb-10 text-center text-4xl font-semibold">Sign Up</h1>
-        {!sent ? <SignUpForm /> : <PostSignUp />}
+        <SignUpForm />
       </main>
     </div>
   );
@@ -134,27 +130,5 @@ const SignUpForm: FC = () => {
         <></>
       )}
     </form>
-  );
-};
-
-const PostSignUp: FC = () => {
-  return (
-    <div className="flex w-1/2 flex-col items-center justify-center">
-      <article className="prose">
-        <p>
-          We&apos;ve sent a verification email to the provided adress. Please
-          make sure to also check the spam folder.
-        </p>
-        <p>Once you&apos;re finished click the button below.</p>
-      </article>
-      <Link className="w-full text-center no-underline" href={"./login"}>
-        <button className="btn-outline btn btn-primary mt-6">
-          Back to Login
-        </button>
-      </Link>
-      <button className="link mt-8 font-bold text-primary no-underline">
-        I have not received an email...
-      </button>
-    </div>
   );
 };
