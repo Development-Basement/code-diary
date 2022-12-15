@@ -186,7 +186,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
         expiryDate.setHours(expiryDate.getHours() + 1);
       }
 
-      document.cookie = `auth=${authToken}; expires=${expiryDate.toUTCString()}; path=/; Secure`;
+      document.cookie = `auth=${authToken}; expires=${expiryDate.toUTCString()}; path=/; Secure; SameSite=Strict`;
     });
   }, []);
 

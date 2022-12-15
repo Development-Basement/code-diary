@@ -83,7 +83,7 @@ export default function Login() {
           </form>
         </div>
       </div>
-      <main className="flex h-screen flex-col place-items-center justify-center bg-base-100 pb-32 pt-16 text-base">
+      <main className="flex h-screen flex-col place-items-center justify-center bg-base-100 pb-32 pt-16">
         <span className="flex flex-col place-items-center gap-1">
           <Logo rem={4} />
           <desc className="mb-7 text-sm">
@@ -112,6 +112,7 @@ export default function Login() {
               placeholder="email"
               className="input-bordered input-primary input input-md"
               ref={loginEmailRef}
+              autoFocus
             />
             <input
               type="password"
@@ -122,13 +123,13 @@ export default function Login() {
             />
             <button
               type="submit"
-              className="btn-primary btn-md btn mt-3 w-full text-base"
+              className="btn-primary btn-md btn mt-3 w-full"
             >
               Login
             </button>
           </form>
           <button
-            className="link mt-3 text-primary hover:text-primary-focus"
+            className="link-primary link mt-3 no-underline"
             onClick={(e) => {
               e.preventDefault();
               setResetModalOpen(true);
