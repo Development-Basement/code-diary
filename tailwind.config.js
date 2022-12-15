@@ -20,9 +20,9 @@ module.exports = {
           accent: "#000000",
           neutral: "#1A1A1A", // Dark - Main
           "base-100": "#212121", // Background - Dark
-          info: "#000000",
-          success: "#000000",
-          warning: "#000000",
+          info: "#89CFF0",
+          success: "#5FBC6E",
+          warning: "#FFA500",
           error: "#ff0000",
         },
       },
