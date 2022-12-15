@@ -132,10 +132,8 @@ const SignUpForm: FC = () => {
       ) : (
         <></>
       )}
-      <Link className="link no-underline" href={"./login"}>
-        <button className="btn-ghost btn w-full">
-          Already have an account?
-        </button>
+      <Link className="link-primary link no-underline" href={"./login"}>
+        Already have an account?
       </Link>
     </form>
   );

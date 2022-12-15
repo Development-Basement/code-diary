@@ -43,7 +43,7 @@ const Note: FC<NoteProps> = ({
           </div>
           <div className="flex grow flex-col">
             <div className="flex justify-between gap-4 font-bold">
-              <span>{username}</span>
+              <span>{username ? username : "loading..."}</span>
               <span>{date.toDate().toDateString()}</span>
             </div>
             <p className="mb-2">

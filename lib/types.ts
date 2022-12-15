@@ -23,6 +23,8 @@ export type FormSubmitHandler = (
   event: React.FormEvent<HTMLFormElement>,
 ) => PossiblyAsync<void>;
 
+export type TagMap = { [id: TagId]: Tag };
+
 // Firestore
 
 type FirestoreSnapshot =
