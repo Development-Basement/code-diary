@@ -7,6 +7,8 @@ import { FC, useContext } from "react";
 
 import { Add } from "@mui/icons-material";
 
+import { FormSubmitHandler } from "@lib/types";
+
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 type categoryObjType = {
@@ -52,7 +54,8 @@ const Sidebar: FC = () => {
   };
 
   // AGAIN.... THE ANY...
-  const addNewCategorySubmitHandle = (e: any) => {
+  // again.... the facepalm
+  const addNewCategorySubmitHandle: FormSubmitHandler = (e) => {
     e.preventDefault();
     // ADD ADDING LOGIC HERE...
     resetAddNewCategoryValues();
@@ -60,7 +63,8 @@ const Sidebar: FC = () => {
   };
 
   // AGAIN.... THE ANY...
-  const addNewTeamSubmitHandle = (e: any) => {
+  // again.... the facepalm
+  const addNewTeamSubmitHandle: FormSubmitHandler = (e) => {
     e.preventDefault();
     // ADD ADDING LOGIC HERE
     resetAddNewTeamValues();
@@ -73,6 +77,7 @@ const Sidebar: FC = () => {
         type="checkbox"
         id="add-new-modal"
         checked={addNewModal}
+        readOnly
         className="modal-toggle"
       />
       <div className="modal">
@@ -118,6 +123,7 @@ const Sidebar: FC = () => {
         type="checkbox"
         id="add-new-team-modal"
         checked={addNewTeamModal}
+        readOnly
         className="modal-toggle"
       />
       <div className="modal">

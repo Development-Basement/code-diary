@@ -17,13 +17,9 @@ export default function TestUserDoc() {
         "mistradam@post.cz",
         "qwerty",
       ); // NDVSXudpVlQHdPoPnW7mVtJB1ky1
-      const docRef = doc(
-        db,
-        "users",
-        "accountInfo",
-        "public",
-        credential.user.uid,
-      ).withConverter(converter<UserPublicDoc>());
+      const docRef = doc(db, "users", credential.user.uid).withConverter(
+        converter<UserPublicDoc>(),
+      );
       const unsub = onSnapshot(
         docRef,
         (snap) => {
