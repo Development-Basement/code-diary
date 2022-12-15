@@ -119,9 +119,9 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   }
 
   async function changeUsername(newUsername: string) {
-    if (await isUsernameInUserDatabase(newUsername)) {
-      throw new Error("Username already in database");
-    }
+    // if (await isUsernameInUserDatabase(newUsername)) {
+    //   throw new Error("Username already in database");
+    // }
     if (user) {
       if (newUsername.match(UsernameRegex) === null) {
         throw new Error("Username is not valid");
