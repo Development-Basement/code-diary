@@ -9,12 +9,18 @@ import { useRef, useState } from "react";
 
 import { FormSubmitHandler } from "@lib/types";
 
-import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
+import {
+  useSendPasswordResetEmail,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 
 export default function Login() {
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
+
+  const loginEmailRef = useRef<HTMLInputElement>(null);
+  const loginPasswordRef = useRef<HTMLInputElement>(null);
 
   const [sendPasswordResetEmail, loading, error] =
     useSendPasswordResetEmail(auth);
@@ -23,6 +29,8 @@ export default function Login() {
     e.preventDefault();
     sendPasswordResetEmail(emailRef.current!.value);
   };
+
+  const [login, loginLoading, loginError] = useSignInWithEmailAndPassword(auth);
 
   return (
     <>
@@ -35,7 +43,7 @@ export default function Login() {
       <div className="modal">
         <div className="modal-box relative flex flex-col">
           <button
-            className="btn btn-sm btn-circle absolute right-2 top-2 p-1"
+            className="btn-sm btn-circle btn absolute right-2 top-2 p-1"
             onClick={(e) => {
               e.preventDefault();
               setResetModalOpen(false);
@@ -65,7 +73,7 @@ export default function Login() {
             )}
             <span className="mt-2 flex w-full justify-end">
               <button
-                className="btn btn-primary"
+                className="btn-primary btn"
                 disabled={loading}
                 type="submit"
               >
@@ -83,22 +91,38 @@ export default function Login() {
           </desc>
         </span>
         <div className="flex w-1/3 flex-col place-items-center gap-2">
-          <form className="flex w-1/2 flex-col justify-center gap-2 text-center">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (
+                loginEmailRef.current?.value &&
+                loginPasswordRef.current?.value
+              ) {
+                login(
+                  loginEmailRef.current.value,
+                  loginPasswordRef.current.value,
+                );
+              }
+            }}
+            className="flex w-1/2 flex-col justify-center gap-2 text-center"
+          >
             <input
               type="email"
               required
               placeholder="email"
               className="input-bordered input-primary input input-md"
+              ref={loginEmailRef}
             />
             <input
               type="password"
               required
               placeholder="password"
               className="input-bordered input-primary input input-md"
+              ref={loginPasswordRef}
             />
             <button
               type="submit"
-              className="btn btn-primary btn-md mt-3 w-full text-base"
+              className="btn-primary btn-md btn mt-3 w-full text-base"
             >
               Login
             </button>
@@ -117,7 +141,7 @@ export default function Login() {
           </button>
           <span className="divider py-4">OR</span>
           <Link className="link w-1/2 no-underline" href={"./signup"}>
-            <button className="btn btn-primary w-full">Sign Up</button>
+            <button className="btn-primary btn w-full">Sign Up</button>
           </Link>
         </div>
       </main>

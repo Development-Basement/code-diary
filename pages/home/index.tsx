@@ -20,11 +20,17 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { possibleThemes, ThemeContext } from "@contexts/themeContext";
 
+import { auth } from "@lib/firebase";
+
+import { useSignOut } from "react-firebase-hooks/auth";
+
 const Home: NextPage = () => {
   const [currentDirectoey, setCurrentDirectory] =
     useState<string>("Default directory");
 
   const { userData } = useAuth();
+
+  const [logout, loading, error] = useSignOut(auth);
 
   const { setTheme, theme } = useContext(ThemeContext);
 
@@ -415,7 +421,12 @@ const Home: NextPage = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="btn-ghost btn justify-start text-error">
+                  <button
+                    className="btn-ghost btn justify-start text-error"
+                    onClick={() => {
+                      logout();
+                    }}
+                  >
                     <LogoutIcon></LogoutIcon>
                     Logout
                   </button>
