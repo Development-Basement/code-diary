@@ -158,6 +158,7 @@ const Home: NextPage = () => {
         type="checkbox"
         id="add-new-modal"
         checked={addNewModal}
+        readOnly
         className="modal-toggle"
       />
       <div className="modal">

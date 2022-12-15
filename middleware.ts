@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { AuthenticateResData } from "./pages/api/authenticate";
 
 export async function middleware(request: NextRequest) {
@@ -7,28 +8,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/missing-host", request.url)); // just a 404 page
   }
 
-  let userIsLoggedIn;
+  const isAuthEndpoint = request.url.match(/(\/login$)|(\/signup$)/);
+  const isHome = !isAuthEndpoint; // will need to change if more endpoints are added
+
   const authCookie = request.cookies.get("auth")?.value;
   if (authCookie === undefined) {
-    userIsLoggedIn = false;
-  } else {
-    const authEndpointUrl = new URL("/api/authenticate", request.url);
-    const userLoggedInData: AuthenticateResData = await fetch(authEndpointUrl, {
-      method: "POST",
-      headers: { auth: authCookie },
-    }).then(async (r) => {
-      console.log(r.text);
-      return r.json();
-    });
-    userIsLoggedIn = userLoggedInData.loggedIn;
+    if (!isHome) return;
+    return NextResponse.redirect(new URL("/login", request.url));
   }
-
-  const isAuthEndpoint = request.url.match(/(\/login$)|(\/signup$)/);
-  if (isAuthEndpoint && userIsLoggedIn) {
+  if (isAuthEndpoint && authCookie !== undefined) {
+    // midleware is run AGAIN for /home -> prevent additional fetching
     return NextResponse.redirect(new URL("/home", request.url));
   }
-  const isHome = !isAuthEndpoint; // will need to change if more endpoints are added
-  if (!userIsLoggedIn && isHome) {
+
+  // now isHome === true && authCookie !== undefined
+  const authEndpointUrl = new URL("http://127.0.0.1:3000/api/authenticate");
+  console.time("fetch");
+  const userLoggedInData: AuthenticateResData = await fetch(authEndpointUrl, {
+    method: "POST",
+    headers: { auth: authCookie },
+  }).then(async (r) => {
+    return r.json();
+  });
+  const userIsLoggedIn = userLoggedInData.loggedIn;
+  console.timeEnd("fetch");
+  if (!userIsLoggedIn) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 }
