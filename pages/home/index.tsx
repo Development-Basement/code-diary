@@ -1,5 +1,4 @@
 import Logo from "@components/logo";
-import Note from "@components/note";
 
 import Sidebar from "@components/sidebar";
 
@@ -19,17 +18,24 @@ import { db } from "@lib/firebase";
 
 import { collection, onSnapshot } from "firebase/firestore";
 
-import React, { useEffect, useRef, useState } from "react";
+import SettingsIcon from "@mui/icons-material/Settings";
+
+import LogoutIcon from "@mui/icons-material/Logout";
+
+import Note from "@components/note";
+import { possibleThemes, ThemeContext } from "@contexts/themeContext";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 export type TagMap = { [id: TagId]: Tag };
 
 const Home: NextPage = () => {
   const { userData, currentUser } = useAuth();
+  const { setTheme, theme } = useContext(ThemeContext);
 
   const [tags, setTags] = useState<TagMap>({});
   const [records, setRecords] = useState<Array<Record>>([]);
   const [addNewModal, setAddNewModal] = useState<boolean>(false);
-
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [currentDirectory, setCurrentDirectory] = useState("Default directory");
   const [groups, setGroups] = useState(["team 1", "team 2", "team 3"]);
   // going to get nuked soon^TM
@@ -162,6 +168,7 @@ const Home: NextPage = () => {
         type="checkbox"
         id="add-new-modal"
         checked={addNewModal}
+        readOnly
         className="modal-toggle"
       />
       <div className="modal">
@@ -315,20 +322,116 @@ const Home: NextPage = () => {
         </div>
       </div>
 
+      <input
+        type="checkbox"
+        id="add-new-modal"
+        checked={settingsOpen}
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box relative">
+          <button
+            onClick={() => {
+              setSettingsOpen(false);
+            }}
+            className="btn-sm btn-circle btn absolute right-2 top-2"
+          >
+            ✕
+          </button>
+          <h3 className="mb-4 text-lg font-bold">Settings</h3>
+          <h4 className="text-md mb-4 font-bold">Theme - {theme}</h4>
+          <span className="grid-cols grid grid-cols-3 gap-4">
+            {possibleThemes.map((theme) => (
+              <div
+                key={theme}
+                onClick={() => {
+                  setTheme(theme);
+                }}
+                data-theme={theme}
+                className="flex flex-col items-center justify-center rounded-lg border border-primary p-0 hover:cursor-pointer"
+              >
+                <span className="h-min w-min p-4">{theme}</span>
+                <div className="m-0 flex h-6 w-full flex-row rounded-b-lg">
+                  <span
+                    className="h-full flex-1 bg-primary"
+                    style={{ borderRadius: "0px 0px 0px 0.5rem" }}
+                  ></span>
+                  <span className="h-full flex-1 bg-secondary"></span>
+                  <span className="h-full flex-1 bg-accent"></span>
+                  <span className="h-full flex-1 bg-neutral"></span>
+                  <span className="h-full flex-1 bg-base-100"></span>
+                  <span className="h-full flex-1 bg-info"></span>
+                  <span className="h-full flex-1 bg-warning"></span>
+                  <span className="h-full flex-1 bg-success"></span>
+                  <span
+                    className="h-full flex-1 bg-error"
+                    style={{ borderRadius: "0px 0px 0.5rem 0px" }}
+                  ></span>
+                </div>
+              </div>
+            ))}
+          </span>
+        </div>
+      </div>
+
       <div className="z-50 flex h-16 w-screen flex-row gap-x-4 bg-neutral text-neutral-content shadow-lg shadow-base-content/5">
         <span className="w-64px px-3">
           <Logo rem={2} />
         </span>
         <span className="mx-auto my-auto flex w-1/2 justify-between">
           <span>{currentDirectory}</span>
-          <label
-            className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
-            onClick={() => {
-              setAddNewModal(true);
-            }}
-          >
-            <Add className="h-8 w-8" />
-          </label>
+          <span className="flex flex-row">
+            <label
+              className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
+              onClick={() => {
+                setAddNewModal(true);
+              }}
+            >
+              <Add className="h-8 w-8"></Add>
+            </label>
+            <div className="dropdown-end dropdown">
+              <button
+                tabIndex={0}
+                style={{
+                  backgroundColor: userData.profileColor ?? "grey",
+                }}
+                className="my-auto ml-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary hover:opacity-75"
+              ></button>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu rounded-box w-52 gap-2 bg-base-100 p-2 shadow"
+              >
+                <li className="mt-3 flex flex-row items-center justify-start border-b border-neutral pb-5 hover:cursor-default">
+                  <span
+                    tabIndex={0}
+                    style={{
+                      backgroundColor: userData.profileColor ?? "grey",
+                      borderRadius: "50%",
+                    }}
+                    className="ml-3 mr-2 flex h-8 w-8 items-center justify-center hover:cursor-default"
+                  ></span>
+                  <>{userData.username ?? "No username?"}</>
+                </li>
+                <li>
+                  <button
+                    className="btn-ghost btn justify-start"
+                    onClick={() => {
+                      setSettingsOpen(true);
+                    }}
+                  >
+                    <SettingsIcon></SettingsIcon>
+                    Settings
+                  </button>
+                </li>
+                <li>
+                  <button className="btn-ghost btn justify-start text-error">
+                    <LogoutIcon />
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </span>
         </span>
       </div>
       <main className="flex grow flex-row overflow-y-hidden">

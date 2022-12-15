@@ -8,7 +8,11 @@ import {
   UserPublicDoc,
 } from "@lib/types";
 
-import { createUserWithEmailAndPassword, User } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onIdTokenChanged,
+  User,
+} from "firebase/auth";
 
 import {
   collection,
@@ -171,6 +175,20 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       pubUnsub();
     };
   }, [user]);
+
+  useEffect(() => {
+    // set id token as a cookie, so server can verify the user
+    return onIdTokenChanged(auth, async (_user) => {
+      let authToken = "";
+      const expiryDate = new Date();
+      if (_user !== null) {
+        authToken = await _user.getIdToken();
+        expiryDate.setHours(expiryDate.getHours() + 1);
+      }
+
+      document.cookie = `auth=${authToken}; expires=${expiryDate.toUTCString()}; path=/; Secure`;
+    });
+  }, []);
 
   const value: AuthContextProps = {
     currentUser: user === undefined ? null : user,
