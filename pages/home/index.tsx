@@ -4,6 +4,8 @@ import Sidebar from "@components/sidebar";
 
 import { useAuth } from "@contexts/authContext";
 
+import { converter, FormSubmitHandler, Record, Tag, TagId } from "@lib/types";
+
 import { Add } from "@mui/icons-material";
 
 import { NextPage } from "next";
@@ -12,29 +14,37 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import CloseIcon from "@mui/icons-material/Close";
 
+import { db } from "@lib/firebase";
+
+import { collection, onSnapshot } from "firebase/firestore";
+
 import SettingsIcon from "@mui/icons-material/Settings";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 
+import Note from "@components/note";
+import { possibleThemes, ThemeContext } from "@contexts/themeContext";
 import React, { useContext, useEffect, useRef, useState } from "react";
 
-import { possibleThemes, ThemeContext } from "@contexts/themeContext";
+export type TagMap = { [id: TagId]: Tag };
 
 const Home: NextPage = () => {
-  const [currentDirectoey, setCurrentDirectory] =
-    useState<string>("Default directory");
-
-  const { userData } = useAuth();
-
+  const { userData, currentUser } = useAuth();
   const { setTheme, theme } = useContext(ThemeContext);
 
+  const [tags, setTags] = useState<TagMap>({});
+  const [records, setRecords] = useState<Array<Record>>([]);
+  const [addNewModal, setAddNewModal] = useState<boolean>(false);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
-
-  const [categories, setCategories] = useState<string[]>([
+  const [categories, setCategories] = useState([
     "category 1",
     "category 2",
     "category 3",
   ]);
+  const [rating, setRating] = useState(1);
+  const [personName, setPersonName] = React.useState<Array<string>>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [avilableCategories, setAvilableCategories] = useState<string[]>([]);
 
   // ADD NEW STATES EXCEPT CATEGORY
   const languageRef = useRef<HTMLInputElement>(null);
@@ -42,121 +52,111 @@ const Home: NextPage = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const dateRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLInputElement>(null);
-  const [rating, setRating] = useState<unknown>(1);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const [avilableCategories, setAvilableCategories] = useState<string[]>([]);
+  const getUserRecordsRef = (uid: string) => {
+    return collection(db, "userRecords", uid, "records").withConverter(
+      converter<Record>(),
+    );
+  };
 
-  useEffect(() => {
-    setAvilableCategories(categories);
-  }, [categories]);
+  const getUserTagsRef = (uid: string) => {
+    return collection(db, "userRecords", uid, "tags").withConverter(
+      converter<Tag>(),
+    );
+  };
 
-  const addCatgoriesSelectHandle = (catName: string) => {
-    let categsTmp: string[] = [];
-    let selectedCategsTmp = selectedCategories;
+  function addCatgoriesSelectHandle(catName: string) {
+    const categsTmp: Array<string> = [];
+    const selectedCategsTmp = selectedCategories;
     avilableCategories.forEach((cat) => {
       if (cat !== catName) categsTmp.push(cat);
       else selectedCategsTmp.push(cat);
     });
     setAvilableCategories(categsTmp);
     setSelectedCategories(selectedCategsTmp);
-  };
+  }
 
-  const removeCatgoriesSelectHandle = (catName: string) => {
-    let selectedCategsTmp: string[] = [];
-    let avilableCategsTmp = avilableCategories;
+  function removeCatgoriesSelectHandle(catName: string) {
+    const selectedCategsTmp: Array<string> = [];
+    const avilableCategsTmp = avilableCategories;
     selectedCategories.forEach((cat) => {
       if (cat !== catName) selectedCategsTmp.push(cat);
       else avilableCategsTmp.push(cat);
     });
     setAvilableCategories(avilableCategsTmp);
     setSelectedCategories(selectedCategsTmp);
-  };
-
-  const [addNewModal, setAddNewModal] = useState<boolean>(false);
+  }
 
   const resetAddNewNoteValues = () => {
-    if (languageRef.current?.value) {
-      languageRef.current.value = "";
-    }
-    if (durationRef.current?.value) {
-      durationRef.current.value = "";
-    }
-    if (descriptionRef.current?.value) {
-      descriptionRef.current.value = "";
-    }
-    if (dateRef.current?.value) {
-      dateRef.current.value = "";
-    }
-    if (timeRef.current?.value) {
-      timeRef.current.value = "";
-    }
+    languageRef.current!.value = "";
+    durationRef.current!.value = "";
+    descriptionRef.current!.value = "";
+    dateRef.current!.value = "";
+    timeRef.current!.value = "";
     setAvilableCategories(categories);
     setSelectedCategories([]);
   };
-  // currently when closing modal via close button, the values are preserved...
 
-  // FIX THE ANY, I DON'T WANT TO GOOGLE WHAT GOD DAMN TYPE IT IS...
-  const addNewNoteSubmitHandle = (e: any) => {
+  //* FIX THE ANY, I DON'T WANT TO GOOGLE WHAT GOD DAMN TYPE IT IS...
+  //! @AlbertPatik it's QUITE LITERALLY IN TYPES.TS BRUH :facepalm:
+  // also, if in doubt, you can assign an empty function as the onSubmit handle
+  // your IDE will tell you the type of the event, you just have to type it out after that
+  const addNewNoteSubmitHandle: FormSubmitHandler = (e) => {
     e.preventDefault();
     resetAddNewNoteValues();
     setAddNewModal(false);
   };
 
-  const [personName, setPersonName] = React.useState<string[]>([]);
+  useEffect(() => {
+    if (currentUser == null) {
+      console.error("You should NOT be here at all");
+      return;
+    }
 
-  // DUMMY DATA
-  /*
-  const tags: { [k: TagId]: Tag } = {
-    icIelKOni9WSwgsm8fRQ: {
-      description: "personal",
-      name: "personal",
-      tagColor: "#EEEEEE",
-    },
-    lkjlkje8123kj128123F: {
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. " +
-        "Dolorem facere perspiciatis culpa praesentium sequi quas aut illum, " +
-        "omnis cupiditate illo, nobis quidem soluta excepturi minus incidunt consectetur. " +
-        "Neque, nesciunt dolorum?",
-      name: "important",
-      tagColor: "#FF3333",
-    },
-    abcdefg: {
-      description: "a very not irrelevant tag",
-      name: "nirrelevant",
-      tagColor: "#333333",
-    },
-  };
+    const tagsUnsub = onSnapshot(
+      getUserTagsRef(currentUser.uid),
+      (snap) => {
+        const newTags: TagMap = {};
+        snap.docs.forEach((doc) => {
+          newTags[doc.id] = doc.data();
+        });
+        setTags(newTags);
+      },
+      (err) => {
+        // for development purposes
+        // TODO: delete this ;)
+        console.log(err.message);
+      },
+    );
+    const recordsUnsub = onSnapshot(
+      getUserRecordsRef(currentUser.uid),
+      (snap) => {
+        const newRecords: Array<Record> = [];
+        snap.docs.forEach((doc) => {
+          newRecords.push(doc.data());
+        });
+        // sort the records to get the newest on the start
+        newRecords.sort((a, b) => (a.date > b.date ? 1 : -1));
+        console.debug(typeof newRecords[0].date, newRecords[0].date);
+        setRecords(newRecords);
+      },
+      (err) => {
+        // for development purposes
+        // TODO: delete this ;)
+        console.log(err.message);
+      },
+    );
 
-  const records: Array<Record> = [
-    {
-      minutesSpent: 12,
-      date: new Date("2022-09-12"),
-      description: "idk testing stuff or whatever",
-      language: "Rust",
-      rating: 3,
-      tags: ["icIelKOni9WSwgsm8fRQ"],
-    },
-    {
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. " +
-        "Dolorem facere perspiciatis culpa praesentium sequi quas aut illum, " +
-        "omnis cupiditate illo, nobis quidem soluta excepturi minus incidunt consectetur. " +
-        "Neque, nesciunt dolorum?",
-      rating: 1,
-      language: "Python",
-      date: new Date("2022-03-25"),
-      minutesSpent: 5,
-      tags: [
-        "icIelKOni9WSwgsm8fRQ",
-        "lkjlkje8123kj128123F",
-        "lkjlkjlksdf",
-        "abcdefg",
-      ],
-    },
-  ];
-*/
+    return () => {
+      tagsUnsub();
+      recordsUnsub();
+    };
+  }, [currentUser]); // technically redundant
+
+  useEffect(() => {
+    //* cringe intensifies
+    setAvilableCategories(categories);
+  }, [categories]);
 
   return (
     <div className="flex h-screen w-screen flex-col bg-base-100">
@@ -179,7 +179,6 @@ const Home: NextPage = () => {
           </button>
           <h3 className="text-lg font-bold">Add new Note</h3>
           <form
-            action=""
             className="my-4 flex w-full flex-col justify-center gap-2 text-center"
             onSubmit={addNewNoteSubmitHandle}
           >
@@ -224,7 +223,7 @@ const Home: NextPage = () => {
                         removeCatgoriesSelectHandle(cat);
                       }}
                     >
-                      <CloseIcon></CloseIcon>
+                      <CloseIcon />
                       {" " + cat}
                     </button>
                   ))
@@ -234,7 +233,7 @@ const Home: NextPage = () => {
               </div>
 
               <div className="dropdown-end dropdown-hover dropdown dropdown-top max-w-max">
-                <label tabIndex={0} className="btn btn ml-4">
+                <label tabIndex={0} className="btn ml-4">
                   <ArrowDropDownIcon></ArrowDropDownIcon>
                 </label>
 
@@ -257,7 +256,6 @@ const Home: NextPage = () => {
                 </ul>
               </div>
             </span>
-
             <div className="rating mx-auto mb-4">
               <input
                 type="radio"
@@ -370,7 +368,6 @@ const Home: NextPage = () => {
           <Logo rem={2} />
         </span>
         <span className="mx-auto my-auto flex w-1/2 justify-between">
-          <span>{currentDirectoey}</span>
           <span className="flex flex-row">
             <label
               className="my-auto flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:opacity-75"
@@ -416,7 +413,7 @@ const Home: NextPage = () => {
                 </li>
                 <li>
                   <button className="btn-ghost btn justify-start text-error">
-                    <LogoutIcon></LogoutIcon>
+                    <LogoutIcon />
                     Logout
                   </button>
                 </li>
@@ -428,7 +425,7 @@ const Home: NextPage = () => {
       <main className="flex grow flex-row overflow-y-hidden">
         <Sidebar />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
-          {/*records.map((record) => (
+          {records.map((record) => (
             <Note
               {...record}
               username={userData.username}
@@ -438,7 +435,7 @@ const Home: NextPage = () => {
                 .filter((t) => t !== undefined)}
               key={JSON.stringify(record)}
             />
-              ))*/}
+          ))}
         </div>
       </main>
     </div>
