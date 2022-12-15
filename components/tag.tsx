@@ -1,12 +1,21 @@
 import { Tag } from "@lib/types";
 import { FC } from "react";
 
-const TagLabel: FC<Tag> = ({ name, tagColor, description }) => {
+export type TagLabelProps = {
+  tooltip?: "bottom" | "right" | "left" | "top" | false;
+} & Tag;
+
+const TagLabel: FC<TagLabelProps> = ({
+  name,
+  tagColor,
+  description,
+  tooltip = "bottom",
+}) => {
   return (
     <div
-      className="tooltip tooltip-bottom"
+      className={tooltip ? `tooltip tooltip-${tooltip} ` : ""}
       // can't do right because of obvious clipping, bottom clips main element border as well... :shrug:
-      data-tip={description}
+      data-tip={tooltip && description}
     >
       <span
         className="badge"
@@ -14,11 +23,7 @@ const TagLabel: FC<Tag> = ({ name, tagColor, description }) => {
           background: tagColor,
         }}
       >
-        <span
-          // style={{ color: tagColor }}
-          // TODO: finish to get full black and white
-          className="bg-inherit bg-clip-text text-transparent contrast-[900] grayscale invert"
-        >
+        <span className="bg-inherit bg-clip-text text-transparent contrast-[900] grayscale invert">
           {name}
         </span>
       </span>

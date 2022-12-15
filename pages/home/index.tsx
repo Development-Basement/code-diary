@@ -35,6 +35,8 @@ const Home: NextPage = () => {
   const [date, setDate] = useState(new Date()); // TODO: change to datetime
   const [time, setTime] = useState(10);
   const [tagsSelection, setTagsSelection] = useState<Array<TagId>>([]);
+  // tag filtering
+  const [disabledTags, setDisabledTags] = useState<Array<TagId>>([]);
 
   const getUserRecordsRef = (uid: UserId) => {
     return collection(db, "userRecords", uid, "records").withConverter(
@@ -54,7 +56,7 @@ const Home: NextPage = () => {
   };
 
   const removeTag = (id: TagId) => {
-    setTagsSelection((prev) => [...prev.filter((t) => t != id)]);
+    setTagsSelection((prev) => prev.filter((t) => t != id));
   };
 
   const noteModalSubmitHandle: FormSubmitHandler = (e) => {
@@ -121,19 +123,26 @@ const Home: NextPage = () => {
         }}
       />
       <main className="flex grow flex-row overflow-y-hidden">
-        <Sidebar />
+        <Sidebar
+          tags={tags}
+          disabledTags={disabledTags}
+          setDisabledTags={setDisabledTags}
+        />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
-          {records.map((record) => (
-            <Note
-              {...record}
-              username={userData.username}
-              userColor={userData.profileColor}
-              tags={record.tags
-                .map((tagId) => tags[tagId])
-                .filter((t) => t !== undefined)}
-              key={JSON.stringify(record)}
-            />
-          ))}
+          {records
+            // only those, that have some tag enabled
+            .filter((r) => r.tags.some((t) => !disabledTags.includes(t)))
+            .map((record) => (
+              <Note
+                {...record}
+                username={userData.username}
+                userColor={userData.profileColor}
+                tags={record.tags
+                  .map((tagId) => tags[tagId])
+                  .filter((t) => t !== undefined)}
+                key={JSON.stringify(record)}
+              />
+            ))}
         </div>
       </main>
       <NoteModal

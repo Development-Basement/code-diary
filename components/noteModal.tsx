@@ -1,10 +1,8 @@
 import Stars from "@components/stars";
+import TagLabel from "@components/tag";
 import { FormSubmitHandler, TagId, TagMap } from "@lib/types";
-
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-
 import { FC } from "react";
 
 export type NodeModalProps = {
@@ -59,7 +57,7 @@ const NodeModal: FC<NodeModalProps> = ({
         className="modal-toggle"
       />
       <div className="modal">
-        <div className="modal-box relative">
+        <div className="modal-box relative overflow-x-hidden">
           <button
             onClick={() => {
               setModalOpen(false);
@@ -75,16 +73,18 @@ const NodeModal: FC<NodeModalProps> = ({
           >
             <input
               required
-              placeholder="Language"
+              placeholder="language"
               className="input-bordered input-primary input"
               value={language}
+              min={1}
+              pattern={/^[a-zA-Z0-9-_]{1,20}$/.source}
               onChange={(e) => {
                 setLanguage(e.target.value);
               }}
             />
             <input
               required
-              placeholder="Duration"
+              placeholder="duration (in minutes)"
               type="number"
               min={0}
               className="input-bordered input-primary input input-md"
@@ -94,8 +94,9 @@ const NodeModal: FC<NodeModalProps> = ({
               }}
             />
             <textarea
-              placeholder="Description"
+              placeholder="description"
               className="textarea-primary textarea"
+              maxLength={500}
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -120,17 +121,17 @@ const NodeModal: FC<NodeModalProps> = ({
             <span className="flex flex-row justify-between">
               <div className=" flex w-full flex-row items-center overflow-auto overflow-y-hidden rounded-lg border border-primary pl-2">
                 {tagsSelection.length != 0 ? (
-                  tagsSelection.map((tag, index) => (
+                  tagsSelection.map((tagId) => (
                     <button
-                      className="btn-ghost btn"
-                      key={index}
+                      className="btn-ghost btn-sm btn"
+                      key={tagId}
                       onClick={(e) => {
                         e.preventDefault();
-                        removeTag(tag);
+                        removeTag(tagId);
                       }}
                     >
+                      <TagLabel {...tags[tagId]} tooltip={false} />
                       <CloseRoundedIcon />
-                      {" " + tag /* TODO: this is an ID -> lookup in tags*/}
                     </button>
                   ))
                 ) : (
@@ -149,20 +150,21 @@ const NodeModal: FC<NodeModalProps> = ({
                     .filter((t) => !tagsSelection.includes(t[0]))
                     .map(([id, data], index) => (
                       <button
-                        className="btn-ghost btn hover:cursor-pointer"
+                        className="btn-ghost btn-sm btn hover:cursor-pointer"
                         key={index}
                         onClick={(e) => {
                           e.preventDefault();
                           addTag(id);
                         }}
                       >
-                        {data.name}
+                        <TagLabel {...data} tooltip="left" />
                       </button>
                     ))}
                 </ul>
               </div>
             </span>
-            <div className="rating mx-auto mb-4">
+            <div className="mb-4 flex items-center gap-2 justify-self-start">
+              <p>How did you like it?</p>
               <Stars rating={rating} setRating={setRating} />
             </div>
             <button type="submit" className="btn-primary btn w-full">
