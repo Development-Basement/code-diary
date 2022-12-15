@@ -1,5 +1,5 @@
 import { useAuth } from "@contexts/authContext";
-import { possibleThemes, ThemeContext } from "@contexts/themeContext";
+import { ThemeContext } from "@contexts/themeContext";
 
 import { useRef, useState } from "react";
 
@@ -86,7 +86,7 @@ const Sidebar: FC = () => {
             onClick={() => {
               setAddNewModal(false);
             }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
+            className="btn-sm btn-circle btn absolute right-2 top-2"
           >
             ✕
           </button>
@@ -112,7 +112,7 @@ const Sidebar: FC = () => {
                 ref={categoryColorRef}
               />
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn-primary btn">
               Add Category
             </button>
           </form>
@@ -132,7 +132,7 @@ const Sidebar: FC = () => {
             onClick={() => {
               setAddNewTeamModal(false);
             }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
+            className="btn-sm btn-circle btn absolute right-2 top-2"
           >
             ✕
           </button>
@@ -148,7 +148,7 @@ const Sidebar: FC = () => {
               className="input-bordered input-primary input"
               ref={teamNameRef}
             />
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn-primary btn">
               Add Team
             </button>
           </form>
@@ -190,23 +190,6 @@ const Sidebar: FC = () => {
           ))}
         </div>
       </nav>
-      <div id="themechange" className="mt-auto">
-        <span className="divider" />
-        <h2 className="mb-3 text-3xl">Themes: </h2>
-        <span className="btn-group btn-group-vertical">
-          {possibleThemes.map((theme) => (
-            <button
-              key={theme}
-              onClick={() => {
-                setTheme(theme);
-              }}
-              className="btn btn-secondary btn-sm"
-            >
-              {theme}
-            </button>
-          ))}
-        </span>
-      </div>
     </div>
   );
 };
