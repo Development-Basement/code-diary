@@ -1,5 +1,6 @@
 import Spinner from "@components/spinner";
 import { useAuth, UsernameRegex } from "@contexts/authContext";
+
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { FormSubmitHandler } from "@lib/types";
@@ -7,6 +8,8 @@ import { FormSubmitHandler } from "@lib/types";
 import { AuthError } from "firebase/auth";
 
 import { FC, useRef, useState } from "react";
+
+import Link from "next/link";
 
 export default function Index() {
   return (
@@ -99,7 +102,7 @@ const SignUpForm: FC = () => {
       />
       <button
         type="submit"
-        className="btn btn-primary btn-md mt-3 text-base font-bold"
+        className="btn-primary btn-md btn mt-3 text-base font-bold"
       >
         {loading ? (
           <span className="flex place-items-center">
@@ -129,6 +132,11 @@ const SignUpForm: FC = () => {
       ) : (
         <></>
       )}
+      <Link className="link no-underline" href={"./login"}>
+        <button className="btn-ghost btn w-full">
+          Already have an account?
+        </button>
+      </Link>
     </form>
   );
 };
