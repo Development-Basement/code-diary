@@ -28,9 +28,15 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 export type TagMap = { [id: TagId]: Tag };
 
+import { auth } from "@lib/firebase";
+
+import { useSignOut } from "react-firebase-hooks/auth";
+
 const Home: NextPage = () => {
   const { userData, currentUser } = useAuth();
   const { setTheme, theme } = useContext(ThemeContext);
+  
+  const [logout, loading, error] = useSignOut(auth);
 
   const [tags, setTags] = useState<TagMap>({});
   const [records, setRecords] = useState<Array<Record>>([]);
@@ -412,7 +418,12 @@ const Home: NextPage = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="btn-ghost btn justify-start text-error">
+                  <button
+                    className="btn-ghost btn justify-start text-error"
+                    onClick={() => {
+                      logout();
+                    }}
+                  >
                     <LogoutIcon />
                     Logout
                   </button>
