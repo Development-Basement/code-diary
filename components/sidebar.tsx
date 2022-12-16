@@ -92,7 +92,7 @@ const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
     }, 50);
   };
 
-  const openEditNewTag = (id: TagId) => {
+  const openEditTag = (id: TagId) => {
     const editedTag = tags[id];
     if (editedTag === undefined) return;
     fillModal({
@@ -266,6 +266,7 @@ const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
                   <button
                     type="button"
                     className="btn-error btn max-w-fit"
+                    disabled={loading}
                     onClick={() => {
                       deleteTagHandle(editingTag);
                     }}
@@ -308,7 +309,7 @@ const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
               <button
                 className="ml-auto h-full items-center"
                 onClick={() => {
-                  openEditNewTag(id);
+                  openEditTag(id);
                 }}
               >
                 <SettingsIcon className="h-full w-full place-content-center" />
