@@ -1,15 +1,10 @@
 import Stars from "@components/stars";
 import TagLabel from "@components/tag";
-
 import { FormSubmitHandler, RecordId, TagId, TagMap } from "@lib/types";
-
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
-import { FC } from "react";
+import { FC, RefObject } from "react";
 
 // maybe just useReducer next time? :)
 export type NodeModalProps = {
@@ -35,6 +30,7 @@ export type NodeModalProps = {
   loading: boolean;
   error: string;
   setError: (value: string) => void;
+  firstRef: RefObject<HTMLInputElement>;
 };
 
 const NodeModal: FC<NodeModalProps> = ({
@@ -60,6 +56,7 @@ const NodeModal: FC<NodeModalProps> = ({
   loading,
   error,
   setError,
+  firstRef,
 }) => {
   return (
     <>
@@ -96,6 +93,7 @@ const NodeModal: FC<NodeModalProps> = ({
               onChange={(e) => {
                 setLanguage(e.target.value);
               }}
+              ref={firstRef}
             />
             <input
               required

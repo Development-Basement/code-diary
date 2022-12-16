@@ -1,6 +1,8 @@
 import TagLabel from "@components/tag";
 import { useAuth } from "@contexts/authContext";
+
 import { db } from "@lib/firebase";
+
 import {
   Color,
   converter,
@@ -10,10 +12,15 @@ import {
   TagMap,
   UserId,
 } from "@lib/types";
+
 import AddIcon from "@mui/icons-material/Add";
+
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
 import SettingsIcon from "@mui/icons-material/Settings";
+
 import {
   addDoc,
   collection,
@@ -26,15 +33,24 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 import { FC, useRef, useState } from "react";
 
 export type SidebarProps = {
   tags: TagMap;
   disabledTags: Array<TagId>;
   setDisabledTags: (tags: Array<TagId>) => void;
+  filteringEnabled: boolean;
+  setFilteringEnabled: (value: boolean) => void;
 };
 
-const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
+const Sidebar: FC<SidebarProps> = ({
+  tags,
+  disabledTags,
+  setDisabledTags,
+  filteringEnabled,
+  setFilteringEnabled,
+}) => {
   const { userData, currentUser } = useAuth();
 
   const [addNewModal, setAddNewModal] = useState(false);
@@ -166,6 +182,53 @@ const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
 
   return (
     <div className="flex h-full w-64 flex-col bg-neutral p-3 text-neutral-content">
+      <nav className="flex flex-col">
+        <div className="mb-8 flex h-min w-full flex-col">
+          <span className="flex flex-row items-center justify-between">
+            <h2 className="text-3xl">Categories</h2>
+            <AddIcon
+              className="hover:cursor-pointer hover:opacity-70"
+              onClick={() => {
+                openCreateNewTag();
+              }}
+            />
+          </span>
+          <span className="divider my-2" />
+          <span className="mb-4 flex items-center gap-4">
+            <input
+              type="checkbox"
+              className="toggle-success toggle"
+              checked={filteringEnabled}
+              onChange={(e) => {
+                setFilteringEnabled(e.target.checked);
+              }}
+            />
+            Enable tag filtering
+          </span>
+          {Object.entries(tags).map(([id, tag], index) => (
+            <span key={index} className="flex h-6 w-full flex-row items-center">
+              <input
+                type="checkbox"
+                checked={!disabledTags.includes(id)}
+                className="checkbox-primary checkbox checkbox-sm mr-2"
+                disabled={!filteringEnabled}
+                onChange={(e) => {
+                  e.target.checked ? removeDisabledTag(id) : addDisabledTag(id);
+                }}
+              />
+              <TagLabel {...tag} tooltip="right" />
+              <button
+                className="ml-auto h-full items-center"
+                onClick={() => {
+                  openEditTag(id);
+                }}
+              >
+                <SettingsIcon className="h-full w-full place-content-center" />
+              </button>
+            </span>
+          ))}
+        </div>
+      </nav>
       <div id="tag-modal">
         <input
           type="checkbox"
@@ -282,42 +345,6 @@ const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
           </div>
         </div>
       </div>
-
-      <nav className="flex flex-col">
-        <div className="mb-8 flex h-min w-full flex-col">
-          <span className="flex flex-row items-center justify-between">
-            <h2 className="text-3xl">Categories</h2>
-            <AddIcon
-              className="hover:cursor-pointer hover:opacity-70"
-              onClick={() => {
-                openCreateNewTag();
-              }}
-            />
-          </span>
-          <span className="my-2 h-1 w-full bg-base-100" />
-          {Object.entries(tags).map(([id, tag], index) => (
-            <span key={index} className="flex h-6 w-full flex-row items-center">
-              <input
-                type="checkbox"
-                checked={!disabledTags.includes(id)}
-                className="checkbox-primary checkbox checkbox-sm mr-2"
-                onChange={(e) => {
-                  e.target.checked ? removeDisabledTag(id) : addDisabledTag(id);
-                }}
-              />
-              <TagLabel {...tag} tooltip="right" />
-              <button
-                className="ml-auto h-full items-center"
-                onClick={() => {
-                  openEditTag(id);
-                }}
-              >
-                <SettingsIcon className="h-full w-full place-content-center" />
-              </button>
-            </span>
-          ))}
-        </div>
-      </nav>
     </div>
   );
 };
