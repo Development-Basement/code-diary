@@ -1,5 +1,7 @@
 # Code-diary
 
+[![Build and push to TdA](https://github.com/Development-Basement/code-diary/actions/workflows/pipeline.yml/badge.svg?branch=release)](https://github.com/Development-Basement/code-diary/actions/workflows/pipeline.yml)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

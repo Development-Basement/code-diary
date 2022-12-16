@@ -1,23 +1,23 @@
 import Stars from "@components/stars";
 import TagLabel from "@components/tag";
-import { FormSubmitHandler, TagId, TagMap } from "@lib/types";
+import { FormSubmitHandler, RecordId, TagId, TagMap } from "@lib/types";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { FC } from "react";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { FC, RefObject } from "react";
 
+// maybe just useReducer next time? :)
 export type NodeModalProps = {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
   language: string;
   setLanguage: (value: string) => void;
-  duration: number | undefined;
+  duration: number;
   setDuration: (value: number) => void;
   description: string;
   setDescription: (value: string) => void;
-  date: Date;
-  setDate: (value: Date) => void;
-  time: number;
-  setTime: (value: number) => void;
+  dateTime: Date;
+  setDateTime: (value: Date) => void;
   tags: TagMap;
   tagsSelection: Array<TagId>;
   addTag: (value: TagId) => void;
@@ -25,6 +25,12 @@ export type NodeModalProps = {
   rating: number;
   setRating: (value: number) => void;
   onSubmit: FormSubmitHandler;
+  deleteRecordHandle: (value: RecordId) => void;
+  editingRecord: RecordId | null;
+  loading: boolean;
+  error: string;
+  setError: (value: string) => void;
+  firstRef: RefObject<HTMLInputElement>;
 };
 
 const NodeModal: FC<NodeModalProps> = ({
@@ -36,10 +42,8 @@ const NodeModal: FC<NodeModalProps> = ({
   setDuration,
   description,
   setDescription,
-  date,
-  setDate,
-  time,
-  setTime,
+  dateTime,
+  setDateTime,
   tags,
   tagsSelection,
   addTag,
@@ -47,6 +51,12 @@ const NodeModal: FC<NodeModalProps> = ({
   rating,
   setRating,
   onSubmit,
+  deleteRecordHandle,
+  editingRecord,
+  loading,
+  error,
+  setError,
+  firstRef,
 }) => {
   return (
     <>
@@ -66,7 +76,9 @@ const NodeModal: FC<NodeModalProps> = ({
           >
             <CloseRoundedIcon className="h-full w-full" />
           </button>
-          <h3 className="text-lg font-bold">Add new Note</h3>
+          <h3 className="text-lg font-bold">
+            {editingRecord ? "Edit" : "Add new"} Note
+          </h3>
           <form
             className="my-4 flex w-full flex-col justify-center gap-2 text-center"
             onSubmit={onSubmit}
@@ -81,6 +93,7 @@ const NodeModal: FC<NodeModalProps> = ({
               onChange={(e) => {
                 setLanguage(e.target.value);
               }}
+              ref={firstRef}
             />
             <input
               required
@@ -91,7 +104,7 @@ const NodeModal: FC<NodeModalProps> = ({
               className="input-bordered input-primary input input-md"
               value={duration}
               onChange={(e) => {
-                setDuration(Number(e.target.value));
+                setDuration(e.target.valueAsNumber);
               }}
             />
             <textarea
@@ -104,37 +117,32 @@ const NodeModal: FC<NodeModalProps> = ({
               }}
             />
             <input
-              type="date"
+              type="datetime-local"
               className="input-bordered input-primary input input-md"
-              value={date.toISOString()}
+              value={dateTime.toISOString().substring(0, 16)}
               onChange={(e) => {
-                setDate(e.target.valueAsDate!);
+                setDateTime(e.target.valueAsDate!);
               }}
-            />
-            <input
-              type="time"
-              className="input-bordered input-primary input input-md"
-              value={time}
-              onChange={(e) => {
-                setTime(Number(e.target.value));
-              }}
+              required
             />
             <span className="flex flex-row justify-between">
               <div className=" flex w-full flex-row items-center overflow-auto overflow-y-hidden rounded-lg border border-primary pl-2">
                 {tagsSelection.length != 0 ? (
-                  tagsSelection.map((tagId) => (
-                    <button
-                      className="btn-ghost btn-sm btn"
-                      key={tagId}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        removeTag(tagId);
-                      }}
-                    >
-                      <TagLabel {...tags[tagId]} tooltip={false} />
-                      <CloseRoundedIcon />
-                    </button>
-                  ))
+                  tagsSelection
+                    .filter((t) => tags[t] !== undefined)
+                    .map((tagId) => (
+                      <button
+                        className="btn-ghost btn-sm btn"
+                        key={tagId}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          removeTag(tagId);
+                        }}
+                      >
+                        <TagLabel {...tags[tagId]} tooltip={false} />
+                        <CloseRoundedIcon />
+                      </button>
+                    ))
                 ) : (
                   <span className="m-auto">Select Categories</span>
                 )}
@@ -164,13 +172,51 @@ const NodeModal: FC<NodeModalProps> = ({
                 </ul>
               </div>
             </span>
-            <div className="mb-4 flex items-center gap-2 justify-self-start">
+            <div className="mb-4 mt-2 flex items-center gap-2 justify-self-start">
               <p>How did you like it?</p>
               <Stars rating={rating} setRating={setRating} />
             </div>
-            <button type="submit" className="btn-primary btn w-full">
-              Add
-            </button>
+            {error ? (
+              <div className="alert alert-error mb-2 inline">
+                <button
+                  className="float-right"
+                  onClick={() => {
+                    setError("");
+                  }}
+                >
+                  <CloseRoundedIcon />
+                </button>
+                <p className="block overflow-hidden text-ellipsis whitespace-normal break-words">
+                  {error}
+                </p>
+              </div>
+            ) : (
+              <></>
+            )}
+            <span className="flex gap-2">
+              <button
+                type="submit"
+                className="btn-primary btn flex-auto"
+                disabled={loading}
+              >
+                {editingRecord ? "Submit" : "Add"}
+              </button>
+              {editingRecord ? (
+                <button
+                  type="button"
+                  className="btn-error btn max-w-fit"
+                  disabled={loading}
+                  onClick={() => {
+                    deleteRecordHandle(editingRecord);
+                  }}
+                >
+                  <DeleteForeverIcon className="h-full" />
+                  Delete
+                </button>
+              ) : (
+                <></>
+              )}
+            </span>
           </form>
         </div>
       </div>

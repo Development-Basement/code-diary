@@ -23,11 +23,23 @@ const TagLabel: FC<TagLabelProps> = ({
           background: tagColor,
         }}
       >
-        <span className="bg-inherit bg-clip-text text-transparent contrast-[900] grayscale invert">
+        <span className="bg-inherit bg-clip-text font-bold text-transparent contrast-[900] grayscale invert">
           {name}
         </span>
       </span>
     </div>
+  );
+};
+
+const AllDirectionLabels: FC = () => {
+  // for tailwind :(
+  return (
+    <>
+      <div className="tooltip tooltip-bottom" />
+      <div className="tooltip tooltip-top" />
+      <div className="tooltip tooltip-right" />
+      <div className="tooltip tooltip-left" />
+    </>
   );
 };
 

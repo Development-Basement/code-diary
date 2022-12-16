@@ -3,14 +3,12 @@ import {
   FirestoreDataConverter as AFirestoreDataConverter,
   QueryDocumentSnapshot as AQueryDocumentSnapshot,
 } from "firebase-admin/firestore";
-
 import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   Timestamp,
 } from "firebase/firestore";
-
 import React from "react";
 
 type PossiblyAsync<T> = T | Promise<T>;
@@ -24,6 +22,9 @@ export type FormSubmitHandler = (
 ) => PossiblyAsync<void>;
 
 export type TagMap = { [id: TagId]: Tag };
+export type RecordMap = {
+  [id: RecordId]: Record;
+};
 
 // Firestore
 
@@ -54,6 +55,7 @@ export type UserId = string;
 export type GroupId = string;
 export type TagId = string;
 export type Color = string;
+export type RecordId = string;
 
 export type Tag = {
   description: string;
