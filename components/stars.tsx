@@ -18,10 +18,11 @@ const Stars: FC<StarProps> = ({ rating, setRating }) => {
         <input
           type="radio"
           className="mask mask-star-2 cursor-default bg-success"
+          readOnly={isDisabled}
           disabled={isDisabled}
-          defaultChecked={rating === i}
-          onClick={() => {
-            if (setRating) {
+          checked={rating === i}
+          onChange={() => {
+            if (!isDisabled) {
               setRating(i);
             }
           }}

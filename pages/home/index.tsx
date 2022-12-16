@@ -1,21 +1,41 @@
 import Note from "@components/note";
 import NoteModal from "@components/noteModal";
+
 import SettingsModal from "@components/settingsModal";
+
 import Sidebar from "@components/sidebar";
+
 import Topbar from "@components/topbar";
+
 import { useAuth } from "@contexts/authContext";
+
 import { db } from "@lib/firebase";
+
 import {
   converter,
   FormSubmitHandler,
   Record,
+  RecordId,
+  RecordMap,
   Tag,
   TagId,
   TagMap,
   UserId,
 } from "@lib/types";
-import { collection, onSnapshot } from "firebase/firestore";
+
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  FirestoreError,
+  onSnapshot,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
+
 import { NextPage } from "next";
+
 import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
@@ -23,17 +43,19 @@ const Home: NextPage = () => {
 
   // DB data
   const [tags, setTags] = useState<TagMap>({});
-  const [records, setRecords] = useState<Array<Record>>([]);
+  const [records, setRecords] = useState<RecordMap>({});
   // modals
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [noteModalOpen, setNoteModalOpen] = useState<boolean>(false);
   // note modal data
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<RecordId | null>(null);
   const [language, setLanguage] = useState("");
   const [rating, setRating] = useState(2);
-  const [duration, setDuration] = useState<number>();
+  const [duration, setDuration] = useState(10);
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState(new Date()); // TODO: change to datetime
-  const [time, setTime] = useState(10);
+  const [dateTime, setDateTime] = useState(new Date());
   const [tagsSelection, setTagsSelection] = useState<Array<TagId>>([]);
   // tag filtering
   const [disabledTags, setDisabledTags] = useState<Array<TagId>>([]);
@@ -59,9 +81,95 @@ const Home: NextPage = () => {
     setTagsSelection((prev) => prev.filter((t) => t != id));
   };
 
-  const noteModalSubmitHandle: FormSubmitHandler = (e) => {
+  const fillModal = ({
+    dateTime: fDateTime = new Date(),
+    description: fDescription = "",
+    language: fLanguage = "",
+    minutesSpent = 10,
+    rating: fRating = 2,
+    tags: fTags = [],
+  }: {
+    dateTime?: Date;
+    description?: string;
+    language?: string;
+    minutesSpent?: number;
+    rating?: number;
+    tags?: Array<string>;
+  }) => {
+    setDateTime(fDateTime);
+    setDescription(fDescription);
+    setLanguage(fLanguage);
+    setDuration(minutesSpent);
+    setRating(fRating);
+    setTagsSelection(fTags);
+  };
+
+  const openCreateNewNote = () => {
+    fillModal({});
+    setEditingRecord(null);
+    setNoteModalOpen(true);
+  };
+
+  const openEditNote = (id: RecordId) => {
+    const editedRecord = records[id];
+    if (editedRecord === undefined) return;
+    fillModal({
+      ...editedRecord,
+      dateTime: editedRecord.date.toDate(),
+    });
+    setEditingRecord(id);
+    setNoteModalOpen(true);
+  };
+
+  const noteModalSubmitHandle: FormSubmitHandler = async (e) => {
     e.preventDefault();
-    // do conditional logic here
+    const recordsRef = getUserRecordsRef(currentUser!.uid);
+    const recordData: Record = {
+      date: Timestamp.fromDate(dateTime),
+      description,
+      language,
+      minutesSpent: duration,
+      rating,
+      tags: tagsSelection,
+    };
+    if (
+      Number.isNaN(recordData.minutesSpent) ||
+      !Number.isFinite(recordData.minutesSpent)
+    ) {
+      setError("Please specifiy a finite number");
+      return;
+    }
+    setLoading(true);
+    try {
+      if (editingRecord) {
+        await updateDoc(
+          doc(db, recordsRef.path, editingRecord).withConverter(
+            converter<Record>(),
+          ),
+          recordData,
+        );
+      } else {
+        await addDoc(recordsRef, recordData);
+      }
+    } catch (err) {
+      setError((err as FirestoreError).message);
+    }
+    setLoading(false);
+    setError("");
+    setNoteModalOpen(false);
+  };
+
+  const deleteRecordHandle = async (id: RecordId) => {
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, getUserRecordsRef(currentUser!.uid).path, id));
+    } catch (err) {
+      setError((err as FirestoreError).message);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    setError("");
     setNoteModalOpen(false);
   };
 
@@ -79,12 +187,11 @@ const Home: NextPage = () => {
     const recordsUnsub = onSnapshot(
       getUserRecordsRef(currentUser.uid),
       (snap) => {
-        const newRecords: Array<Record> = [];
+        const newRecords: RecordMap = {};
         snap.docs.forEach((doc) => {
-          newRecords.push(doc.data());
+          newRecords[doc.id] = doc.data();
         });
         // sort the records to get the newest on the start
-        newRecords.sort((a, b) => (a.date > b.date ? 1 : -1));
         setRecords(newRecords);
       },
     );
@@ -103,7 +210,7 @@ const Home: NextPage = () => {
         }}
         addNewOnClick={(e) => {
           e.preventDefault();
-          setNoteModalOpen(true);
+          openCreateNewNote();
         }}
       />
       <main className="flex grow flex-row overflow-y-hidden">
@@ -113,10 +220,11 @@ const Home: NextPage = () => {
           setDisabledTags={setDisabledTags}
         />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
-          {records
+          {Object.entries(records)
             // only those, that have some tag enabled
-            .filter((r) => r.tags.some((t) => !disabledTags.includes(t)))
-            .map((record) => (
+            .filter(([, r]) => r.tags.some((t) => !disabledTags.includes(t)))
+            .sort(([, a], [, b]) => (a.date > b.date ? 1 : -1))
+            .map(([id, record]) => (
               <Note
                 {...record}
                 username={userData.username}
@@ -124,7 +232,10 @@ const Home: NextPage = () => {
                 tags={record.tags
                   .map((tagId) => tags[tagId])
                   .filter((t) => t !== undefined)}
-                key={JSON.stringify(record)}
+                key={id}
+                onClick={() => {
+                  openEditNote(id);
+                }}
               />
             ))}
         </div>
@@ -138,10 +249,8 @@ const Home: NextPage = () => {
         setDuration={setDuration}
         description={description}
         setDescription={setDescription}
-        date={date}
-        setDate={setDate}
-        time={time}
-        setTime={setTime}
+        dateTime={dateTime}
+        setDateTime={setDateTime}
         tags={tags}
         tagsSelection={tagsSelection}
         addTag={addTag}
@@ -149,6 +258,11 @@ const Home: NextPage = () => {
         rating={rating}
         setRating={setRating}
         onSubmit={noteModalSubmitHandle}
+        deleteRecordHandle={deleteRecordHandle}
+        editingRecord={editingRecord}
+        loading={loading}
+        error={error}
+        setError={setError}
       />
       <SettingsModal modalOpen={settingsOpen} setModalOpen={setSettingsOpen} />
     </div>

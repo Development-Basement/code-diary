@@ -17,6 +17,7 @@ export type NoteProps = {
   minutesSpent: number;
   rating: number;
   tags: Array<Tag>;
+  onClick: () => void;
 };
 
 const Note: FC<NoteProps> = ({
@@ -28,11 +29,15 @@ const Note: FC<NoteProps> = ({
   date,
   minutesSpent,
   tags,
+  onClick,
 }) => {
   userColor = userColor ?? "gray";
 
   return (
-    <div className="snap-start bg-base-100 pt-3 text-base-content">
+    <div
+      className="snap-start bg-base-100 pt-3 text-base-content hover:cursor-pointer hover:opacity-90"
+      onClick={onClick}
+    >
       <div className="p-2">
         <div className="flex gap-2">
           <div className="h-14 w-14 flex-none">
