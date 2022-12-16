@@ -87,6 +87,7 @@ const NodeModal: FC<NodeModalProps> = ({
               placeholder="duration (in minutes)"
               type="number"
               min={0}
+              step={1}
               className="input-bordered input-primary input input-md"
               value={duration}
               onChange={(e) => {

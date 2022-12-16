@@ -1,0 +1,17 @@
+# git
+.git
+
+# dev env
+.next
+.env*
+node_modules
+npm-debug.log
+
+# docker files
+Dockerfile
+.dockerignore
+
+# other files
+.vscode
+README.md
+roadmap.md

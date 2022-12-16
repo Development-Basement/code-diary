@@ -22,7 +22,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // now isHome === true && authCookie !== undefined
-  const authEndpointUrl = new URL("http://127.0.0.1:3000/api/authenticate");
+  const port = process.env.PORT || "3000";
+  const authEndpointUrl = new URL(`http://127.0.0.1:${port}/api/authenticate`);
   console.time("fetch");
   const userLoggedInData: AuthenticateResData = await fetch(authEndpointUrl, {
     method: "POST",
