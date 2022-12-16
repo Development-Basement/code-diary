@@ -1,4 +1,5 @@
 import { auth, db } from "@lib/firebase";
+
 import {
   Color,
   converter,
@@ -6,11 +7,13 @@ import {
   UserPrivateDoc,
   UserPublicDoc,
 } from "@lib/types";
+
 import {
   createUserWithEmailAndPassword,
   onIdTokenChanged,
   User,
 } from "firebase/auth";
+
 import {
   collection,
   doc,
@@ -22,8 +25,11 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 import { useRouter } from "next/router";
+
 import React, { useContext, useEffect, useState } from "react";
+
 import { useAuthState } from "react-firebase-hooks/auth";
 
 type UserData = {
@@ -68,7 +74,8 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   const [invites, setInvites] = useState<Array<GroupId>>([]);
 
   function generateRandomColor(): Color {
-    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    return "#A174EB";
+    // return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
   function getPublicDocRef(uid: string) {
@@ -138,10 +145,18 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       setProfileColor(null);
       setInvites([]);
       setGroups([]);
-      if (!authDomains.includes(router.route)) router.push("/login");
+      if (!authDomains.includes(router.route)) {
+        setTimeout(() => {
+          router.push("/login");
+        }, 100);
+      }
       return;
     }
-    if (authDomains.includes(router.route)) router.push("/home");
+    if (authDomains.includes(router.route)) {
+      setTimeout(() => {
+        router.push("/home");
+      }, 100);
+    }
     const pubUnsub = onSnapshot(
       getPublicDocRef(user.uid),
       (pubDoc) => {
@@ -151,6 +166,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
         }
         setUsername(data.username);
         setProfileColor(data.profileColor);
+        console.log(username, profileColor);
       },
       (err) => {
         console.error(err.message, err.cause);
@@ -176,7 +192,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
       privUnsub();
       pubUnsub();
     };
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     // set id token as a cookie, so server can verify the user

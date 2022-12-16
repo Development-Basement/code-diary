@@ -1,4 +1,5 @@
 import { useAuth, UsernameRegex } from "@contexts/authContext";
+
 import { possibleThemes, ThemeContext } from "@contexts/themeContext";
 
 import { db } from "@lib/firebase";
@@ -23,9 +24,9 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
   const { userData, currentUser } = useAuth();
 
   const [error, setError] = useState("");
-  const [color, setColor] = useState(userData.profileColor ?? "gray");
+  const [color, setColor] = useState(userData.profileColor);
   const [colorLoading, setColorLoading] = useState(false);
-  const [username, setUsername] = useState(userData.username ?? "username");
+  const [username, setUsername] = useState(userData.username);
   const [usernameLoading, setUsernameLoading] = useState(false);
 
   function getPublicDocRef(uid: string) {
@@ -38,7 +39,7 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
     setColorLoading(true);
     try {
       await updateDoc(getPublicDocRef(currentUser!.uid), {
-        profileColor: color,
+        profileColor: color!,
       });
     } catch (err) {
       setError((err as FirebaseError).message);
@@ -52,9 +53,15 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
   const submitUsername: ButtonHandler = async (e) => {
     e.preventDefault();
     setUsernameLoading(true);
+    if (username?.match(UsernameRegex) === null) {
+      setError(
+        "You can only use letters, numbers and '-' and '_' characters in usernames!",
+      );
+      return;
+    }
     try {
       await updateDoc(getPublicDocRef(currentUser!.uid), {
-        username: username,
+        username: username!,
       });
     } catch (err) {
       setError((err as FirebaseError).message);
@@ -94,7 +101,7 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
               maxLength={15}
               pattern={UsernameRegex.source}
               className="input-bordered input-primary input input-sm w-48"
-              value={username}
+              value={username ?? "username"}
               onChange={(e) => {
                 setUsername(e.target.value);
               }}
@@ -114,7 +121,7 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
               type="color"
               placeholder="Category Name"
               className="border-px h-full w-48 border border-primary p-px"
-              value={color}
+              value={color ?? "#808080"}
               onChange={(e) => {
                 setColor(e.target.value);
               }}
@@ -157,6 +164,25 @@ const SettingsModal: FC<SettingsModalProps> = ({ modalOpen, setModalOpen }) => {
               </div>
             ))}
           </span>
+          {error ? (
+            <div className="flex flex-col">
+              <div className="alert alert-error mt-3 inline">
+                <button
+                  className="float-right mb-auto mt-0 h-full"
+                  onClick={() => {
+                    setError("");
+                  }}
+                >
+                  <CloseRoundedIcon />
+                </button>
+                <p className="block overflow-hidden text-ellipsis whitespace-normal break-words">
+                  {error}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>

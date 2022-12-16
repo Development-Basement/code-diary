@@ -133,7 +133,7 @@ const SignUpForm: FC = () => {
       ) : (
         <></>
       )}
-      <Link className="link-primary link no-underline" href={"./login"}>
+      <Link className="link-primary link mt-3 no-underline" href={"./login"}>
         Already have an account?
       </Link>
     </form>
