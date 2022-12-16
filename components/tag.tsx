@@ -31,6 +31,7 @@ const TagLabel: FC<TagLabelProps> = ({
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AllDirectionLabels: FC = () => {
   // for tailwind :(
   return (

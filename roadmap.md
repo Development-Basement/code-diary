@@ -6,11 +6,11 @@
 - [x] add all features (description) into `tags modal`
 - [x] function that takes predefined `input` and puts it into the `tags modal`
 - [x] function that takes tags modal data and `updates/creates the tag`
-- [ ] `usercolor` editing
-- [ ] `username` editing
+- [x] `usercolor` editing
+- [x] `username` editing
 - [x] `login` and `signout` loading and error handling
 - [x] onAuthStateChanged page `redirects`
-- [ ] **minimum `viable` product `reached`**
+- [x] **minimum `viable` product `reached`**
 - [ ] `DB rules` fiesta (tags, notes)
 - [x] `Dockerfile`
 - [ ] duplicate `Firebase project` to isolate prod 🚀 from dev
@@ -23,9 +23,9 @@
 - [x] `tag filtering`
   - [x] fix tag filtering
 - [x] **MERGE RICHARD'S CHANGES** (at some point)
-- [ ] go full **`production-ready`**
+- [x] go full **`production-ready`**
   - [x] delete `/api/__allUsers.ts`
-  - [ ] redirect in `/` (maybe just enough to add in middleware)
+  - [x] redirect in `/` (maybe just enough to add in middleware)
   - [x] delete `test/userDoc.tsx`
 - [ ] test `Note` behavior if a lot of tags are present (overflow?)
 - [ ] **GO FUCKING TOUCH GRASS AND `SLEEP`**
