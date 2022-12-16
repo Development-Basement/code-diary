@@ -28,4 +28,4 @@
   - [x] redirect in `/` (maybe just enough to add in middleware)
   - [x] delete `test/userDoc.tsx`
 - [ ] test `Note` behavior if a lot of tags are present (overflow?)
-- [ ] **GO FUCKING TOUCH GRASS AND `SLEEP`**
+- [x] **GO FUCKING TOUCH GRASS AND `SLEEP`**
