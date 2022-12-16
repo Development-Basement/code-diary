@@ -1,0 +1,41 @@
+name: Build and push to TdA
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          build-args: |
+            NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }}
+            NEXT_PUBLIC_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_AUTH_DOMAIN }}
+            NEXT_PUBLIC_PROJECT_ID=${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
+            NEXT_PUBLIC_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_STORAGE_BUCKET }}
+            NEXT_PUBLIC_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_MESSAGING_SENDER_ID }}
+            NEXT_PUBLIC_APP_ID=${{ secrets.NEXT_PUBLIC_APP_ID }}
+            NEXT_PUBLIC_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_MEASUREMENT_ID }}
+            CLIENT_EMAIL=${{ secrets.CLIENT_EMAIL }}
+            PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+          tags: tda-devbase:latest
+          outputs: type=docker,dest=/tmp/tda-devbase.tar
+
+      - name: Upload to TdA
+        uses: Tour-de-App/upload-app@1079ded462c5c87ecd77039a955dda2e9db1d809
+        with:
+          team_secret: ${{ secrets.TEAM_SECRET }}
+          image_name: tda-devbase
+          image_path: /tmp/tda-devbase.tar

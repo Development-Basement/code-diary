@@ -5,14 +5,11 @@ export const possibleThemes = [
   "halloween",
   "dark",
   "synthwave",
-  "black",
   "luxury",
-  "business",
   "night",
   "coffee",
   "forest",
   "dracula",
-  "light",
 ] as const;
 
 export type Theme = typeof possibleThemes[number];

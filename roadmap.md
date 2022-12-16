@@ -1,0 +1,31 @@
+# Finishing roadmap
+
+- [x] split `/home` into modals (optional), topbar and the rest
+- [ ] function that takes predefined input and puts it into the note `editing modal`
+- [ ] function that takes the data from the not editing modal and `creates/updates notes` the database
+- [x] add all features (description) into `tags modal`
+- [x] function that takes predefined `input` and puts it into the `tags modal`
+- [x] function that takes tags modal data and `updates/creates the tag`
+- [ ] `usercolor` editing
+- [ ] `username` editing
+- [ ] `DB rules` fiesta (tags, notes)
+- [x] `login` and `signout` loading and error handling
+- [x] onAuthStateChanged page `redirects`
+- [ ] **minimum `viable` product `reached`**
+- [x] `Dockerfile`
+- [ ] duplicate `Firebase project` to isolate prod 🚀 from dev
+- [x] `Github` action to submit on push to `release` branch
+- [ ] various `refactorings`
+  - [ ] remove the theme change tool from `_app.tsx`
+  - [ ] add `settings icon` in home
+  - [x] `tag` printing, color preview
+  - [ ] try to solve tooltip overflow (again)
+- [x] `tag filtering`
+  - [ ] fix tag filtering
+- [ ] **MERGE RICHARD'S CHANGES** (at some point)
+- [ ] go full **`production-ready`**
+  - [x] delete `/api/__allUsers.ts`
+  - [ ] redirect in `/` (maybe just enough to add in middleware)
+  - [x] delete `test/userDoc.tsx`
+- [ ] test `Note` behavior if a lot of tags are present (overflow?)
+- [ ] **GO FUCKING TOUCH GRASS AND `SLEEP`**

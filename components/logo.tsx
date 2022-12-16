@@ -1,4 +1,4 @@
-import { Code } from "@mui/icons-material";
+import CodeIcon from "@mui/icons-material/Code";
 import { FC } from "react";
 
 type LogoProps = {
@@ -12,7 +12,10 @@ const Logo: FC<LogoProps> = ({ rem = 1 }) => {
         <span className="text-primary">Code</span>
         Diary
       </span>
-      <Code className="text-primary" sx={{ fontSize: `${rem * 1.65}rem` }} />
+      <CodeIcon
+        className="text-primary"
+        sx={{ fontSize: `${rem * 1.65}rem` }}
+      />
     </div>
   );
 };

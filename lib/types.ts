@@ -8,6 +8,7 @@ import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
+  Timestamp,
 } from "firebase/firestore";
 
 import React from "react";
@@ -21,6 +22,8 @@ export type ButtonHandler = (
 export type FormSubmitHandler = (
   event: React.FormEvent<HTMLFormElement>,
 ) => PossiblyAsync<void>;
+
+export type TagMap = { [id: TagId]: Tag };
 
 // Firestore
 
@@ -59,7 +62,7 @@ export type Tag = {
 };
 
 export type Record = {
-  date: Date;
+  date: Timestamp;
   description: string;
   language: string;
   minutesSpent: number;

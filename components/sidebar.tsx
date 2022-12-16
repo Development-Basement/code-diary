@@ -1,206 +1,322 @@
+import TagLabel from "@components/tag";
 import { useAuth } from "@contexts/authContext";
-import { possibleThemes, ThemeContext } from "@contexts/themeContext";
+import { db } from "@lib/firebase";
+import {
+  Color,
+  converter,
+  FormSubmitHandler,
+  Tag,
+  TagId,
+  TagMap,
+  UserId,
+} from "@lib/types";
+import AddIcon from "@mui/icons-material/Add";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  FirestoreError,
+  getDocs,
+  limit,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { FC, useRef, useState } from "react";
 
-import { useRef, useState } from "react";
-
-import { FC, useContext } from "react";
-
-import { Add } from "@mui/icons-material";
-
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-
-type categoryObjType = {
-  name: string;
-  color: string;
+export type SidebarProps = {
+  tags: TagMap;
+  disabledTags: Array<TagId>;
+  setDisabledTags: (tags: Array<TagId>) => void;
 };
 
-const Sidebar: FC = () => {
-  const { userData } = useAuth();
-  const { setTheme } = useContext(ThemeContext);
+const Sidebar: FC<SidebarProps> = ({ tags, disabledTags, setDisabledTags }) => {
+  const { userData, currentUser } = useAuth();
 
-  const [addNewModal, setAddNewModal] = useState<boolean>(false);
-  const [addNewTeamModal, setAddNewTeamModal] = useState<boolean>(false);
+  const [addNewModal, setAddNewModal] = useState(false);
+  const [editingTag, setEditingTag] = useState<TagId | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [tagDescription, setTagDescription] = useState("");
+  const [tagName, setTagName] = useState("");
+  const [tagColor, setTagColor] = useState<Color>(
+    userData.profileColor ?? "gray",
+  );
 
-  const [categories, setCategories] = useState<categoryObjType[]>([
-    { name: "test", color: "red" },
-    { name: "test 2", color: "blue" },
-  ]);
+  const nameRef = useRef<HTMLInputElement>(null);
 
-  const categoryNameRef = useRef<HTMLInputElement>(null);
-  const categoryColorRef = useRef<HTMLInputElement>(null);
-  const teamNameRef = useRef<HTMLInputElement>(null);
-
-  const addNewTeamHandle = () => {
-    setAddNewTeamModal(true);
+  const getTagsCollection = (uid: UserId) => {
+    return collection(db, "userRecords", uid, "tags").withConverter(
+      converter<Tag>(),
+    );
   };
 
-  const addNewCategoryHandle = () => {
+  const isTagNameUnique = async (name: string) => {
+    console.log(editingTag);
+    const q = query(
+      getTagsCollection(currentUser!.uid),
+      where("name", "==", name),
+      limit(1),
+    ).withConverter(converter<Tag>());
+    let isInDb = false;
+    let isEdited = false;
+    await getDocs(q).then((res) => {
+      isInDb = res.docs.every((_doc) => _doc.data().name === name);
+      isEdited = res.docs.every((_doc) => _doc.id === editingTag);
+    });
+    console.log(isEdited, isInDb);
+    return isEdited ? true : !isInDb;
+  };
+
+  const addDisabledTag = (id: TagId) => {
+    if (!disabledTags.includes(id)) {
+      setDisabledTags([id, ...disabledTags]);
+    }
+  };
+  const removeDisabledTag = (id: TagId) => {
+    if (disabledTags.includes(id)) {
+      setDisabledTags(disabledTags.filter((t) => t !== id));
+    }
+  };
+
+  const openCreateNewTag = () => {
+    fillModal({});
+    setEditingTag(null);
+    setAddNewModal(true);
+    setTimeout(() => {
+      nameRef.current?.focus();
+    }, 50);
+  };
+
+  const openEditNewTag = (id: TagId) => {
+    const editedTag = tags[id];
+    if (editedTag === undefined) return;
+    fillModal({
+      name: editedTag.name,
+      color: editedTag.tagColor,
+      description: editedTag.description,
+    });
+    setEditingTag(id);
     setAddNewModal(true);
   };
 
-  const resetAddNewCategoryValues = () => {
-    if (categoryColorRef.current?.value && categoryNameRef.current?.value) {
-      categoryNameRef.current.value = "";
-      categoryColorRef.current.value = "";
-    }
+  const fillModal = ({
+    name = "",
+    color = undefined,
+    description = "",
+  }: {
+    name?: string;
+    color?: Color;
+    description?: string;
+  }) => {
+    if (color === undefined) color = userData.profileColor ?? "gray";
+    setTagColor(color);
+    setTagName(name);
+    setTagDescription(description);
   };
 
-  const resetAddNewTeamValues = () => {
-    if (teamNameRef.current?.value) {
-      teamNameRef.current.value = "";
-    }
-  };
-
-  // AGAIN.... THE ANY...
-  const addNewCategorySubmitHandle = (e: any) => {
+  const addNewCategorySubmitHandle: FormSubmitHandler = async (e) => {
     e.preventDefault();
-    // ADD ADDING LOGIC HERE...
-    resetAddNewCategoryValues();
+    const tagsRef = getTagsCollection(currentUser!.uid);
+    setLoading(true);
+    if (!(await isTagNameUnique(tagName))) {
+      setError("This tag name already exists!");
+      setLoading(false);
+      return;
+    }
+    const tagData = {
+      description: tagDescription,
+      name: tagName,
+      tagColor: tagColor,
+    };
+    try {
+      if (editingTag) {
+        await updateDoc(
+          doc(db, tagsRef.path, editingTag).withConverter(converter<Tag>()),
+          tagData,
+        );
+      } else {
+        await addDoc(tagsRef, tagData);
+      }
+    } catch (err) {
+      setError((err as FirestoreError).message);
+    }
+    setLoading(false);
+    setError("");
     setAddNewModal(false);
   };
 
-  // AGAIN.... THE ANY...
-  const addNewTeamSubmitHandle = (e: any) => {
-    e.preventDefault();
-    // ADD ADDING LOGIC HERE
-    resetAddNewTeamValues();
-    setAddNewTeamModal(false);
+  const deleteTagHandle = async (id: TagId) => {
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, getTagsCollection(currentUser!.uid).path, id));
+    } catch (err) {
+      setError((err as FirestoreError).message);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    setError("");
+    setAddNewModal(false);
   };
 
   return (
     <div className="flex h-full w-64 flex-col bg-neutral p-3 text-neutral-content">
-      <input
-        type="checkbox"
-        id="add-new-modal"
-        checked={addNewModal}
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box relative">
-          <button
-            onClick={() => {
-              setAddNewModal(false);
-            }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </button>
-          <h3 className="text-lg font-bold">Add new Category</h3>
-          <form
-            action=""
-            className="my-4 flex w-full flex-col justify-center gap-2 text-center"
-            onSubmit={(e) => addNewCategorySubmitHandle(e)}
-          >
-            <input
-              required
-              placeholder="Category Name..."
-              className="input-bordered input-primary input"
-              ref={categoryNameRef}
-            />
-            <div className="flex h-12 flex-row items-center">
-              <span className="mr-4 ml-2">Color: </span>
+      <div id="tag-modal">
+        <input
+          type="checkbox"
+          checked={addNewModal}
+          readOnly
+          className="modal-toggle"
+        />
+        <div className="modal">
+          <div className="modal-box relative">
+            <button
+              onClick={() => {
+                setAddNewModal(false);
+              }}
+              className="btn-sm btn-circle btn absolute right-2 top-2 p-1"
+            >
+              <CloseRoundedIcon className="h-full w-full" />
+            </button>
+            <h3 className="text-lg font-bold">
+              {editingTag ? "Edit" : "Add new"} category
+            </h3>
+            <form
+              action=""
+              className="my-4 flex w-full flex-col justify-center gap-2 text-center"
+              onSubmit={(e) => {
+                addNewCategorySubmitHandle(e);
+              }}
+            >
               <input
                 required
-                type="color"
-                placeholder="Category Name..."
-                className="h-full w-full bg-transparent"
-                ref={categoryColorRef}
+                type="text"
+                placeholder="name"
+                className="input-bordered input-primary input"
+                value={tagName}
+                ref={nameRef}
+                pattern={/^[a-zA-Z0-9-_]{1,20}$/.source}
+                onChange={(e) => {
+                  setTagName(e.target.value);
+                }}
               />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Add Category
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <input
-        type="checkbox"
-        id="add-new-team-modal"
-        checked={addNewTeamModal}
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box relative">
-          <button
-            onClick={() => {
-              setAddNewTeamModal(false);
-            }}
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-          >
-            ✕
-          </button>
-          <h3 className="text-lg font-bold">Add new Team</h3>
-          <form
-            action=""
-            className="my-4 flex w-full flex-col justify-center gap-2 text-center"
-            onSubmit={(e) => addNewTeamSubmitHandle(e)}
-          >
-            <input
-              required
-              placeholder="Team Name..."
-              className="input-bordered input-primary input"
-              ref={teamNameRef}
-            />
-            <button type="submit" className="btn btn-primary">
-              Add Team
-            </button>
-          </form>
+              <textarea
+                placeholder="description"
+                className="textarea-primary textarea"
+                maxLength={80}
+                value={tagDescription}
+                onChange={(e) => {
+                  setTagDescription(e.target.value);
+                }}
+              />
+              <div className="flex h-6 flex-row items-center">
+                <span className="mr-4 ml-2">Pick a color!</span>
+                <input
+                  required
+                  type="color"
+                  placeholder="Category Name"
+                  className="border-px h-full w-20 border border-primary p-px"
+                  value={tagColor}
+                  onChange={(e) => {
+                    setTagColor(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="my-2 flex h-6 flex-row items-center">
+                <span className="mr-4 ml-2">
+                  Your new category will look like this:
+                </span>
+                <TagLabel
+                  description={tagDescription}
+                  name={tagName || "category"}
+                  tagColor={tagColor}
+                />
+              </div>
+              {error ? (
+                <div className="alert alert-error mb-2 inline">
+                  <button
+                    className="float-right"
+                    onClick={() => {
+                      setError("");
+                    }}
+                  >
+                    <CloseRoundedIcon />
+                  </button>
+                  <p className="block overflow-hidden text-ellipsis whitespace-normal break-words">
+                    {error}
+                  </p>
+                </div>
+              ) : (
+                <></>
+              )}
+              <span className="flex gap-2">
+                <button
+                  type="submit"
+                  className="btn-primary btn flex-auto"
+                  disabled={loading}
+                >
+                  {editingTag ? "Submit" : "Add"}
+                </button>
+                {editingTag ? (
+                  <button
+                    type="button"
+                    className="btn-error btn max-w-fit"
+                    onClick={() => {
+                      deleteTagHandle(editingTag);
+                    }}
+                  >
+                    <DeleteForeverIcon className="h-full" />
+                    Delete
+                  </button>
+                ) : (
+                  <></>
+                )}
+              </span>
+            </form>
+          </div>
         </div>
       </div>
 
       <nav className="flex flex-col">
         <div className="mb-8 flex h-min w-full flex-col">
           <span className="flex flex-row items-center justify-between">
-            <h2 className="text-3xl">Teams</h2>
-            <Add
-              className="hover:cursor-pointer hover:opacity-70"
-              onClick={() => {
-                addNewTeamHandle();
-              }}
-            ></Add>
-          </span>
-          <span className="my-2 h-1 w-full bg-base-100" />
-          <h3 className="text-2xl">Personal</h3>
-        </div>
-        <div className="mb-8 flex h-min w-full flex-col">
-          <span className="flex flex-row items-center justify-between">
             <h2 className="text-3xl">Categories</h2>
-            <Add
+            <AddIcon
               className="hover:cursor-pointer hover:opacity-70"
               onClick={() => {
-                addNewCategoryHandle();
+                openCreateNewTag();
               }}
-            ></Add>
+            />
           </span>
           <span className="my-2 h-1 w-full bg-base-100" />
-          {categories.map((cat, index) => (
-            <span key={index} className="flex w-full flex-row items-center">
-              <MoreVertIcon fontSize="small" className="mr-2"></MoreVertIcon>
-              <button style={{ color: cat.color }} className="text-lg">
-                {cat.name}
+          {Object.entries(tags).map(([id, tag], index) => (
+            <span key={index} className="flex h-6 w-full flex-row items-center">
+              <input
+                type="checkbox"
+                checked={!disabledTags.includes(id)}
+                className="checkbox-primary checkbox checkbox-sm mr-2"
+                onChange={(e) => {
+                  e.target.checked ? removeDisabledTag(id) : addDisabledTag(id);
+                }}
+              />
+              <TagLabel {...tag} tooltip="right" />
+              <button
+                className="ml-auto h-full items-center"
+                onClick={() => {
+                  openEditNewTag(id);
+                }}
+              >
+                <SettingsIcon className="h-full w-full place-content-center" />
               </button>
             </span>
           ))}
         </div>
       </nav>
-      <div id="themechange" className="mt-auto">
-        <span className="divider" />
-        <h2 className="mb-3 text-3xl">Themes: </h2>
-        <span className="btn-group btn-group-vertical">
-          {possibleThemes.map((theme) => (
-            <button
-              key={theme}
-              onClick={() => {
-                setTheme(theme);
-              }}
-              className="btn btn-secondary btn-sm"
-            >
-              {theme}
-            </button>
-          ))}
-        </span>
-      </div>
     </div>
   );
 };
