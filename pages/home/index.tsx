@@ -136,7 +136,7 @@ const Home: NextPage = () => {
       Number.isNaN(recordData.minutesSpent) ||
       !Number.isFinite(recordData.minutesSpent)
     ) {
-      setError("Please specifiy a finite number");
+      setError("Please specify a finite number");
       return;
     }
     setLoading(true);
@@ -222,6 +222,7 @@ const Home: NextPage = () => {
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
           {Object.entries(records)
             // only those, that have some tag enabled
+            // FIXME: what if the tag has NO tags???
             .filter(([, r]) => r.tags.some((t) => !disabledTags.includes(t)))
             .sort(([, a], [, b]) => (a.date > b.date ? 1 : -1))
             .map(([id, record]) => (

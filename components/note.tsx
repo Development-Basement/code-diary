@@ -32,7 +32,6 @@ const Note: FC<NoteProps> = ({
   onClick,
 }) => {
   userColor = userColor ?? "gray";
-
   return (
     <div
       className="snap-start bg-base-100 pt-3 text-base-content hover:cursor-pointer hover:opacity-90"
@@ -49,7 +48,7 @@ const Note: FC<NoteProps> = ({
           <div className="flex grow flex-col">
             <div className="flex justify-between gap-4 font-bold">
               <span>{username ? username : "loading..."}</span>
-              <span>{date.toDate().toDateString()}</span>
+              <span>{date.toDate().toLocaleString()}</span>
             </div>
             <p className="mb-2">
               <span className="font-bold text-success">{language}</span> for{" "}
