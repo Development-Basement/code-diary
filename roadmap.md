@@ -25,7 +25,7 @@
 - [x] **MERGE RICHARD'S CHANGES** (at some point)
 - [ ] go full **`production-ready`**
   - [x] delete `/api/__allUsers.ts`
-  - [ ] redirect in `/` (maybe just enough to add in middleware)
+  - [x] redirect in `/` (maybe just enough to add in middleware)
   - [x] delete `test/userDoc.tsx`
 - [ ] test `Note` behavior if a lot of tags are present (overflow?)
 - [ ] **GO FUCKING TOUCH GRASS AND `SLEEP`**
