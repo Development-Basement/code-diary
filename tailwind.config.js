@@ -17,13 +17,13 @@ module.exports = {
         sapphire: {
           primary: "#A174EB", // Action - Main
           secondary: "#5FBC6E", // Important
-          accent: "#000000",
+          accent: "#51A800",
           neutral: "#1A1A1A", // Dark - Main
           "base-100": "#212121", // Background - Dark
-          info: "#89CFF0",
-          success: "#5FBC6E",
-          warning: "#FFA500",
-          error: "#ff0000",
+          info: "#2463EB",
+          success: "#16A249",
+          warning: "#DB7706",
+          error: "#DC2828",
         },
       },
       "halloween",
