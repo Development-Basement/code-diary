@@ -12,7 +12,7 @@
 - [x] `login` and `signout` loading and error handling
 - [x] onAuthStateChanged page `redirects`
 - [ ] **minimum `viable` product `reached`**
-- [ ] `Dockerfile`
+- [x] `Dockerfile`
 - [ ] duplicate `Firebase project` to isolate prod 🚀 from dev
 - [ ] `Github` action to submit on push to `release` branch
 - [ ] various `refactorings`
@@ -21,6 +21,7 @@
   - [x] `tag` printing, color preview
   - [ ] try to solve tooltip overflow (again)
 - [x] `tag filtering`
+  - [ ] fix tag filtering
 - [ ] **MERGE RICHARD'S CHANGES** (at some point)
 - [ ] go full **`production-ready`**
   - [x] delete `/api/__allUsers.ts`

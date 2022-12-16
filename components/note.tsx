@@ -35,10 +35,10 @@ const Note: FC<NoteProps> = ({
     <div className="snap-start bg-base-100 pt-3 text-base-content">
       <div className="p-2">
         <div className="flex gap-2">
-          <div className="h-fit w-14 flex-none">
+          <div className="h-14 w-14 flex-none">
             <AccountCircle
               className="h-full w-full"
-              style={{ color: userColor }}
+              style={{ color: userColor, fontSize: "3.5rem" }}
             />
           </div>
           <div className="flex grow flex-col">
