@@ -36,7 +36,7 @@ import {
 
 import { NextPage } from "next";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Home: NextPage = () => {
   const { userData, currentUser } = useAuth();
@@ -47,6 +47,7 @@ const Home: NextPage = () => {
   // modals
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [noteModalOpen, setNoteModalOpen] = useState<boolean>(false);
+  const noteModalFirst = useRef<HTMLInputElement>(null);
   // note modal data
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,6 +59,7 @@ const Home: NextPage = () => {
   const [dateTime, setDateTime] = useState(new Date());
   const [tagsSelection, setTagsSelection] = useState<Array<TagId>>([]);
   // tag filtering
+  const [filteringEnabled, setFilteringEnabled] = useState(false);
   const [disabledTags, setDisabledTags] = useState<Array<TagId>>([]);
 
   const getUserRecordsRef = (uid: UserId) => {
@@ -108,6 +110,9 @@ const Home: NextPage = () => {
     fillModal({});
     setEditingRecord(null);
     setNoteModalOpen(true);
+    setTimeout(() => {
+      noteModalFirst.current?.focus();
+    }, 50);
   };
 
   const openEditNote = (id: RecordId) => {
@@ -218,12 +223,17 @@ const Home: NextPage = () => {
           tags={tags}
           disabledTags={disabledTags}
           setDisabledTags={setDisabledTags}
+          filteringEnabled={filteringEnabled}
+          setFilteringEnabled={setFilteringEnabled}
         />
         <div className="z-10 mx-auto w-1/2 snap-y scroll-pt-3 space-y-4 overflow-y-auto scroll-smooth bg-neutral py-3 px-1 shadow-xl shadow-base-content/10">
           {Object.entries(records)
             // only those, that have some tag enabled
-            // FIXME: what if the tag has NO tags???
-            .filter(([, r]) => r.tags.some((t) => !disabledTags.includes(t)))
+            .filter(
+              ([, r]) =>
+                !filteringEnabled ||
+                r.tags.some((t) => !disabledTags.includes(t)),
+            )
             .sort(([, a], [, b]) => (a.date > b.date ? 1 : -1))
             .map(([id, record]) => (
               <Note
@@ -264,6 +274,7 @@ const Home: NextPage = () => {
         loading={loading}
         error={error}
         setError={setError}
+        firstRef={noteModalFirst}
       />
       <SettingsModal modalOpen={settingsOpen} setModalOpen={setSettingsOpen} />
     </div>
