@@ -14,7 +14,7 @@
 - [ ] **minimum `viable` product `reached`**
 - [x] `Dockerfile`
 - [ ] duplicate `Firebase project` to isolate prod 🚀 from dev
-- [ ] `Github` action to submit on push to `release` branch
+- [x] `Github` action to submit on push to `release` branch
 - [ ] various `refactorings`
   - [ ] remove the theme change tool from `_app.tsx`
   - [ ] add `settings icon` in home
