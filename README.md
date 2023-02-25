@@ -2,6 +2,8 @@
 
 [![Build and push to TdA](https://github.com/Development-Basement/code-diary/actions/workflows/pipeline.yml/badge.svg?branch=release)](https://github.com/Development-Basement/code-diary/actions/workflows/pipeline.yml)
 
+This project was created for the 1st nomination round of the [Tour de App](https://tourdeapp.cz/) 2022 competition. Following this sentence is the original README created by `create-next-app`.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
